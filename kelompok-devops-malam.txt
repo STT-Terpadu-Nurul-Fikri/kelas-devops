@@ -1,0 +1,9 @@
+Kelompok DevOps - One
+
+1.Planning (Trello/Google Drive)- Farid Muhari (0110220282) & Riddho Fadli Pradana (0110220279)
+2.Build (Git) - Adji Saka Ardhana (0110220081)
+3.Continuous Integration (GitLab) - Ali Mahmud (0110220167)
+4.Deploy (Docker Kubernets) -  Raihan Kaeni Smit (0110220152)
+5.Operate (Jira/Ansible) - Muhammad Yusuf Salman (0110219009)
+6.Continuous Feedback (ELK Stack) - Rifqi Fadhlurrahman (0110220063)
+
