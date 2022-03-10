@@ -46,7 +46,7 @@
 | 4.      | 110220207 | Hidayatul ihsan      |           |                 |                |
 | 5.      | 110220092 | Rio Agi              |           |                 |                |
 | 6.      | 110220024 | Muhammad Rizqi       |           |                 |                |
-|         | 110220106 | Muhammad Farhan Aula |           |                 |                |
+| 7.      | 110220106 | Muhammad Farhan Aula |           |                 |                |
 
 **Kelompok DevOps-5**
 
