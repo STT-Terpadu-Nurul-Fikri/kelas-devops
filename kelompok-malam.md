@@ -5,7 +5,7 @@
 | 1.      | 110220282 | Farid Muhari          |           |                 |                |
 | 2.      | 110220279 | Riddho Fadli Pradana  |           |                 |                |
 | 3.      | 110220081 | Adji Saka Ardhana     |           |                 |                |
-| 4.      | 110220167 | Ali Mahmud            |           |                 |                |
+| 4.      | 110220167 | Ali Mahmud            |alim20167ti@student.nurulfikri.ac.id|a5hmudnf|                |
 | 5.      | 110220152 | Raihan Kaeni Smit     |           |                 |                |
 | 6.      | 110219009 | Muhammad Yusuf Salman |           |                 |                |
 | 7.      | 110220063 | Rifqi Fadhlurrahman   |           |                 |                |
