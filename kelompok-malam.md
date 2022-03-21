@@ -19,7 +19,7 @@
 | 2.      | 110219090 | Yazidul Yasar       |           |                 |                |
 | 3.      | 110219088 | Alfin Adi Surya     |           |                 |                |
 | 4.      | 110220247 | Habibi              |           |                 |                |
-| 5.      | 110219134 | Agung Priyo Sembodo |           |                 |                |
+| 5.      | 110219134 | Agung Priyo Sembodo |agun19134ti@student.nurulfikri.ac.id           |priyo00                 |                |
 | 6.      | 110219133 | Iqbal Assegaf       |           |                 |                |
 | 7.      | 110220174 | Wahid Wahyudin      |           |                 |                |
 
