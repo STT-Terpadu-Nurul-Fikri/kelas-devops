@@ -33,7 +33,7 @@
 | 3.      | 110220088 | Muhammad Riza Fahluzi       |           |                 |                |
 | 4.      | 110219132 | Amelya Firjiyanti Nur'aniza |           |                 |                |
 | 5.      | 110220090 | Farid Jauhari Fajri         |           |                 |                |
-| 6.      | 110218090 | Fauzan Nugraha Daulay       |           |                 |                |
+| 6.      | 110218090 | Fauzan Nugraha Daulay       |fauz18090ti@student.nurulfikri.a.id|owzan29|                |
 |         |           |                             |           |                 |                |
 
 **Kelompok DevOps-4**
