@@ -40,7 +40,7 @@
 
 | **No.** | **NIM**   | **Nama Lengkap**     | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------|-----------|-----------------|----------------|
-| 1.      | 110220022 | Annisa Munajalipah   |           |                 |                |
+| 1.      | 110220022 | Annisa Munajalipah   |  munajalipqhannisaa@gmail.com       |   annisa32              |                |
 | 2.      | 110220010 | Joko Supriyanto      |           |                 |                |
 | 3.      | 110220240 | Mukminun             |           |                 |                |
 | 4.      | 110220207 | Hidayatul ihsan      |           |                 |                |
