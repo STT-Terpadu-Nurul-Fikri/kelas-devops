@@ -2,7 +2,7 @@
 
 | **No.** | **NIM**   | **Nama Lengkap**      | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------|-----------|-----------------|----------------|
-| 1.      | 110220282 | Farid Muhari          |           |                 |                |
+| 1.      | 110220282 | Farid Muhari          |faridmuhari08@gmail.com|FaridMuhari                 |                |
 | 2.      | 110220279 | Riddho Fadli Pradana  |           |                 |                |
 | 3.      | 110220081 | Adji Saka Ardhana     |           |                 |                |
 | 4.      | 110220167 | Ali Mahmud            |alim20167ti@student.nurulfikri.ac.id|a5hmudnf|                |
