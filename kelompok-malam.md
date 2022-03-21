@@ -5,10 +5,10 @@
 | 1.      | 110220282 | Farid Muhari          |           |                 |                |
 | 2.      | 110220279 | Riddho Fadli Pradana  |           |                 |                |
 | 3.      | 110220081 | Adji Saka Ardhana     |           |                 |                |
-| 4.      | 110220167 | Ali Mahmud            |           |                 |                |
-| 5.      | 110220152 | Raihan Kaeni Smit     |           |                 |                |
+| 4.      | 110220167 | Ali Mahmud            |alim20167ti@student.nurulfikri.ac.id|a5hmudnf|                |
+| 5.      | 110220152 | Raihan Kaeni Smit     |raih20152ti@student.nurulfikri.ac.id           |raihan-smit20152ti                 |                |
 | 6.      | 110219009 | Muhammad Yusuf Salman |           |                 |                |
-| 7.      | 110220063 | Rifqi Fadhlurrahman   |           |                 |                |
+| 7.      | 110220063 | Rifqi Fadhlurrahman   |rifq20063ti@student.nurulfikri.ac.id           |rifqifdhlr                 |                |
 
 
 **Kelompok DevOps-2**
@@ -19,7 +19,7 @@
 | 2.      | 110219090 | Yazidul Yasar       |           |                 |                |
 | 3.      | 110219088 | Alfin Adi Surya     |           |                 |                |
 | 4.      | 110220247 | Habibi              |           |                 |                |
-| 5.      | 110219134 | Agung Priyo Sembodo |           |                 |                |
+| 5.      | 110219134 | Agung Priyo Sembodo |agun19134ti@student.nurulfikri.ac.id           |priyo00                 |                |
 | 6.      | 110219133 | Iqbal Assegaf       |           |                 |                |
 | 7.      | 110220174 | Wahid Wahyudin      |           |                 |                |
 
@@ -33,7 +33,7 @@
 | 3.      | 110220088 | Muhammad Riza Fahluzi       |           |                 |                |
 | 4.      | 110219132 | Amelya Firjiyanti Nur'aniza |           |                 |                |
 | 5.      | 110220090 | Farid Jauhari Fajri         |           |                 |                |
-| 6.      | 110218090 | Fauzan Nugraha Daulay       |           |                 |                |
+| 6.      | 110218090 | Fauzan Nugraha Daulay       |fauz18090ti@student.nurulfikri.a.id|owzan29|                |
 |         |           |                             |           |                 |                |
 
 **Kelompok DevOps-4**
@@ -57,5 +57,5 @@
 | 3.      | 110220034 | Muhammad Zulfikar           |           |                 |                |
 | 4.      | 110220227 | Sheilla Inayatul Maula      |           |                 |                |
 | 5.      | 110219005 | Sidiq Permana Putra         |           |                 |                |
-| 6.      |           |                             |           |                 |                |
+| 6.      | 110218064 | Bayu Pratama                | bayzpratama7@gmail.com | swtlbyz                |                |
 |         |           |                             |           |                 |                |
