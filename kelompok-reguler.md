@@ -39,7 +39,7 @@
 | **No.** | **NIM**   | **Nama Lengkap**           | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------------|-----------|-----------------|----------------|
 | 1.      | 110220223 | Muhamad Burhanudin Yusuf   |           |                 |                |
-| 2.      | 110220145 | Rizky Febriana Akbar       |           |                 |                |
+| 2.      | 110220145 | Rizky Febriana Akbar       |rizk20145ti@student.nurulfikri.ac.id          |Rizkyfeb22                 |                |
 | 3.      | 110220249 | Raihana Cindy Afifah       |raih20249ti@student.nurulfikri.ac.id           |raihanacindy                 |                |
 | 4.      | 110220139 | Wahyu Firmansyah           |           |                 |                |
 | 5.      | 110220126 | Rafly Fadjrian             |           |                 |                |
