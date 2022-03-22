@@ -34,7 +34,7 @@
 | 6.      | 110220241 | Mariam                  |           |                 |                |
 | 7.      | 110220137 | Muhammad Ihsanul Hakiim |           |                 |                |
 
-**Kelompok DevOps-4**
+**Kelompok DevOps-4-(nova)**
 
 | **No.** | **NIM**   | **Nama Lengkap**           | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------------|-----------|-----------------|----------------|
