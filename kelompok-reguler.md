@@ -15,7 +15,7 @@
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
 | 1.      | 110220157 | Adriansyah Mahesa Wicaksana |           |                 |                |
-| 2.      | 110220127 | Farhan Afriansyah           |farh20127ti@student.nurulfikri.ac.id           |Farhanafriansyah02                 |                |
+| 2.      | 110220127 | Farhan Afriansyah           |           |                 |                |
 | 3.      | 110220200 | Faza Tadzkia Nurqolbina     |           |                 |                |
 | 4.      | 110220003 | Novita Rahmadhani           |           |                 |                |
 | 5.      | 110220138 | Nurul Haya Fathinah         |           |                 |                |
@@ -58,7 +58,7 @@
 | 6.      | 110220134 | Muhammad Fathur Abdullah Azzam |           |                 |                |
 | 7.      | 110219068 | Achmad Izhar                   |           |                 |                |
 
-**Kelompok DevOps-6**
+**Kelompok DevOps-6-(Trove)
 
 | **No.** | **NIM**   | **Nama Lengkap**              | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------------|-----------|-----------------|----------------|
