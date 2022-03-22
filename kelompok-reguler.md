@@ -42,7 +42,7 @@
 | 2.      | 110220145 | Rizky Febriana Akbar       |rizk20145ti@student.nurulfikri.ac.id          |Rizkyfeb22                 |                |
 | 3.      | 110220249 | Raihana Cindy Afifah       |raih20249ti@student.nurulfikri.ac.id           |raihanacindy                 |                |
 | 4.      | 110220139 | Wahyu Firmansyah           |           |                 |                |
-| 5.      | 110220126 | Rafly Fadjrian             |rafl20126ti@student.nurulfikri.ac.id           |raflfadjri                 |                |
+| 5.      | 110220126 | Rafly Fadjrian             |rafl20126ti@student.nurulfikri.ac.id           |raflyfadjri                 |                |
 | 6.      | 110220080 | Syauqi Musyaffa Khairullah |           |                 |                |
 | 7.      | 110219070 | Rista Fauji Nafsir         |           |                 |                |
 
