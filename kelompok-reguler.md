@@ -43,7 +43,7 @@
 | 3.      | 110220249 | Raihana Cindy Afifah       |raih20249ti@student.nurulfikri.ac.id           |raihanacindy                 |                |
 | 4.      | 110220139 | Wahyu Firmansyah           |           |                 |                |
 | 5.      | 110220126 | Rafly Fadjrian             |rafl20126ti@student.nurulfikri.ac.id           |raflyfadjri                 |                |
-| 6.      | 110220080 | Syauqi Musyaffa Khairullah |syau20080ti@student.nurulfikri.ac.id           |Syauqi024                 |                |
+| 6.      | 110220080 | Syauqi Musyaffa Khairullah |syau20080ti@student.nurulfikri.ac.id           |Syauqi024                 |     ketua           |
 | 7.      | 110219070 | Rista Fauji Nafsir         |           |                 |                |
 
 **Kelompok DevOps-5**
