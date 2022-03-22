@@ -2,7 +2,7 @@
 
 | **No.** | **NIM**   | **Nama Lengkap**       | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|------------------------|-----------|-----------------|----------------|
-| 1.      | 110220064 | Adam Maulana           |adam20064ti@student.nurulfikri.ac.id            |AdamMaulana                 |                |
+| 1.      | 110220064 | Adam Maulana           |           |                 |                |
 | 2.      | 110220136 | Muhammad Alif Luthan   | muha20136ti@student.nurulfikri.ac.id          | okealip                |                |
 | 3.      | 110220163 | Rangga Saputra Abas    |rang20163ti@student.nurulfikri.ac.id           |RanggaSaputra                 |                |
 | 4.      | 110220254 | Regita Asri Prihantari |regi20254ti@student.nurulfikri.ac.id           |regitasri                 |                |
@@ -20,7 +20,7 @@
 | 4.      | 110220003 | Novita Rahmadhani           |novi20003ti@student.nurulfikri.ac.id           |NovitaRahmadhani              |                |
 | 5.      | 110220138 | Nurul Haya Fathinah         |haya.grldn@gmail.com |realithy                 |                |
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |zhaf20121ti@student.nurulfikri.ac.id           |zhvyra                 |                |
-| 7.      | 110220258 | Farrel Rizky Ramadhan       |           |                 |                |
+| 7.      | 110220258 | Farrel Rizky Ramadhan       |farr20258ti@student.nurulfikri.ac.id|Farrel20258                |
 
 **Kelompok DevOps-3-(Ironic)
 
