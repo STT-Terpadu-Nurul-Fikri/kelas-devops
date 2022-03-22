@@ -31,7 +31,7 @@
 | 3.      | 110220269 | David Octavyanto        |           |                 |                |
 | 4.      | 110220018 | Fatchan Muhammad Hakim  |           |                 |                |
 | 5.      | 110220062 | Ikhwan Nurrohman        |ikhw20062ti@student.nurulfikri.ac.id           | ikhwannurohman                |                |
-| 6.      | 110220241 | Mariam                  |           |                 |                |
+| 6.      | 110220241 | Mariam                  |mari20241ti@student.nurulfikri.ac.id          |     mariamti02            |                |
 | 7.      | 110220137 | Muhammad Ihsanul Hakiim |           |                 |                |
 
 **Kelompok DevOps-4-(nova)**
