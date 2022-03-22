@@ -22,7 +22,7 @@
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |           |                 |                |
 | 7.      | 110220258 | Farrel Rizky Ramadhan       |           |                 |                |
 
-**Kelompok DevOps-3**
+**Kelompok DevOps-3-(Ironic)
 
 | **No.** | **NIM**   | **Nama Lengkap**        | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------|-----------|-----------------|----------------|
