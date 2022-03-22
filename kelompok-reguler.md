@@ -1,4 +1,4 @@
-**Kelompok DevOps-1**
+**Kelompok DevOps-1-(contoh-Horizon)**
 
 | **No.** | **NIM**   | **Nama Lengkap**       | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|------------------------|-----------|-----------------|----------------|
