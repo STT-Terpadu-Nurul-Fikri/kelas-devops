@@ -16,7 +16,7 @@
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
 | 1.      | 110220157 | Adriansyah Mahesa Wicaksana |adri20157ti@student.nurulfikri.ac.id           |adrnsyhmahesa                 |                |
 | 2.      | 110220127 | Farhan Afriansyah           |farh20127ti@student.nurulfikri.ac.id           |Farhanafriansyah02                 |                |
-| 3.      | 110220200 | Faza Tadzkia Nurqolbina     |           |                 |                |
+| 3.      | 110220200 | Faza Tadzkia Nurqolbina     |faza20200ti@student.nurulfikri.ac.id           |FazaTadzkia                 |                |
 | 4.      | 110220003 | Novita Rahmadhani           |           |                 |                |
 | 5.      | 110220138 | Nurul Haya Fathinah         |haya.grldn@gmail.com |realithy                 |                |
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |           |                 |                |
