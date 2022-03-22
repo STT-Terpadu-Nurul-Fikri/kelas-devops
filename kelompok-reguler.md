@@ -14,7 +14,7 @@
 
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
-| 1.      | 110220157 | Adriansyah Mahesa Wicaksana |           |                 |                |
+| 1.      | 110220157 | Adriansyah Mahesa Wicaksana |adri20157ti@student.nurulfikri.ac.id           |adrnsyhmahesa                 |                |
 | 2.      | 110220127 | Farhan Afriansyah           |           |                 |                |
 | 3.      | 110220200 | Faza Tadzkia Nurqolbina     |           |                 |                |
 | 4.      | 110220003 | Novita Rahmadhani           |           |                 |                |
