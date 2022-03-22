@@ -18,7 +18,7 @@
 | 2.      | 110220127 | Farhan Afriansyah           |           |                 |                |
 | 3.      | 110220200 | Faza Tadzkia Nurqolbina     |           |                 |                |
 | 4.      | 110220003 | Novita Rahmadhani           |           |                 |                |
-| 5.      | 110220138 | Nurul Haya Fathinah         |           |                 |                |
+| 5.      | 110220138 | Nurul Haya Fathinah         |haya.grldn@gmail.com |realithy                 |                |
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |           |                 |                |
 | 7.      | 110220258 | Farrel Rizky Ramadhan       |           |                 |                |
 
