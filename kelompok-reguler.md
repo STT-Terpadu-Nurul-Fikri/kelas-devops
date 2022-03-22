@@ -6,7 +6,7 @@
 | 2.      | 110220136 | Muhammad Alif Luthan   | muha20136ti@student.nurulfikri.ac.id          | okealip                |                |
 | 3.      | 110220163 | Rangga Saputra Abas    |rang20163ti@student.nurulfikri.ac.id           |RanggaSaputra                 |                |
 | 4.      | 110220254 | Regita Asri Prihantari |regi20254ti@student.nurulfikri.ac.id           |regitasri                 |                |
-| 5.      | 110220029 | Zulfania Shofa         |           |                 |                |
+| 5.      | 110220029 | Zulfania Shofa         |zulf20029ti@student.nurulfikri.ac.id           |Zulfaniashofa29                 |                |
 | 6.      | 110219026 | Neni Nurhaeni          |           |                 |                |
 |         |           |                        |           |                 |                |
 
