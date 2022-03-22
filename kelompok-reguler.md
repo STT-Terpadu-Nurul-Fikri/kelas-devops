@@ -26,7 +26,7 @@
 
 | **No.** | **NIM**   | **Nama Lengkap**        | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------|-----------|-----------------|----------------|
-| 1.      | 110220070 | Arni Rahayu Suryani     |           |                 |                |
+| 1.      | 110220070 | Arni Rahayu Suryani     | arni20070ti@student.nurulfikri.ac.id          | arnirhyus17                |                |
 | 2.      | 110220087 | Chika Aulia Zahwa       | chik20087ti@student.nurulfikri.ac.id          | chikaauli               |                |
 | 3.      | 110220269 | David Octavyanto        |           |                 |                |
 | 4.      | 110220018 | Fatchan Muhammad Hakim  |           |                 |                |
