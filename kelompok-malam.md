@@ -29,7 +29,7 @@
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
 | 1.      | 110219021 | Supriyanto                  | supr19021ti@student.nurulfikri.ac.id          |supriyanto2020                 |                |
-| 2.      | 110220016 | Fatrul Mukhlasin            |           |                 |                |
+| 2.      | 110220016 | Fatrul Mukhlasin            | fatr20016ti@student.nurulfikri.ac.id          | fatrulmukhlasin                |                |
 | 3.      | 110220088 | Muhammad Riza Fahluzi       |           |                 |                |
 | 4.      | 110219132 | Amelya Firjiyanti Nur'aniza |           |                 |                |
 | 5.      | 110220090 | Farid Jauhari Fajri         |           |                 |                |
