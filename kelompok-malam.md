@@ -55,7 +55,7 @@
 | 1.      | 110220273 | Jodi Al Hadi                |           |                 |                |
 | 2.      | 110219052 | Muhammad Sya'bandi Abdillah |           |                 |                |
 | 3.      | 110220034 | Muhammad Zulfikar           |           |                 |                |
-| 4.      | 110220227 | Sheilla Inayatul Maula      |           |                 |                |
+| 4.      | 110220227 | Sheilla Inayatul Maula      | maulasheila496@gmail.com| SheillaInyt           |            |                |
 | 5.      | 110219005 | Sidiq Permana Putra         |           |                 |                |
 | 6.      | 110218064 | Bayu Pratama                | bayzpratama7@gmail.com | swtlbyz                |                |
 |         |           |                             |           |                 |                |
