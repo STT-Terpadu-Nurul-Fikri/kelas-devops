@@ -7,7 +7,7 @@
 | 3.      | 110220081 | Adji Saka Ardhana     |adji20081ti@student.nurulfikri.ac.id          | adjisakaardhana                | Git (Build)               |
 | 4.      | 110220167 | Ali Mahmud            |alim20167ti@student.nurulfikri.ac.id|a5hmudnf|  Jenkins (CI) |
 | 5.      | 110220152 | Raihan Kaeni Smit     |raih20152ti@student.nurulfikri.ac.id           |raihan-smit20152ti                 |Ansible (CD)                |
-| 6.      | 110219009 | Muhammad Yusuf Salman |           |                 |Git (CF)                |
+| 6.      | 110219009 | Muhammad Yusuf Salman |muha19009ti@student.nurulfikri.ac.id           |Yusmann                 |Git (CF)                |
 | 7.      | 110220063 | Rifqi Fadhlurrahman   |rifq20063ti@student.nurulfikri.ac.id           |rifqifdhlr                 | ELK Stack (Monitoring)               |
 
 
