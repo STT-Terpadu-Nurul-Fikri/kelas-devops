@@ -31,7 +31,7 @@
 | 1.      | 110219021 | Supriyanto                  | supr19021ti@student.nurulfikri.ac.id          |supriyanto2020                 |                |
 | 2.      | 110220016 | Fatrul Mukhlasin            | fatr20016ti@student.nurulfikri.ac.id          | fatrulmukhlasin                |                |
 | 3.      | 110220088 | Muhammad Riza Fahluzi       | muha20088ti@student.nurulfikri.ac.id          | mriza14                |                |
-| 4.      | 110219132 | Amelya Firjiyanti Nur'aniza |           |                 |                |
+| 4.      | 110219132 | Amelya Firjiyanti Nur'aniza | amel19132ti@student.nurulfikri.ac.id          | AmelyaFN                |                |
 | 5.      | 110220090 | Farid Jauhari Fajri         |           |                 |                |
 | 6.      | 110218090 | Fauzan Nugraha Daulay       |fauz18090ti@student.nurulfikri.ac.id|owzan29|                |
 |         |           |                             |           |                 |                |
