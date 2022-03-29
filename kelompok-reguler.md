@@ -3,7 +3,7 @@
 | **No.** | **NIM**   | **Nama Lengkap**       | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|------------------------|-----------|-----------------|----------------|
 | 1.      | 110220064 | Adam Maulana           |adam20064ti@student.nurulfikri.ac.id            |AdamMaulana                 |                |
-| 2.      | 110220136 | Muhammad Alif Luthan   | muha20136ti@student.nurulfikri.ac.id          | okealip                |                |
+| 2.      | 110220136 | Muhammad Alif Luthan   | muha20136ti@student.nurulfikri.ac.id          | okealip                |   ketua             |
 | 3.      | 110220163 | Rangga Saputra Abas    |rang20163ti@student.nurulfikri.ac.id           |RanggaSaputra                 |                |
 | 4.      | 110220254 | Regita Asri Prihantari |regi20254ti@student.nurulfikri.ac.id           |regitasri                 |                |
 | 5.      | 110220029 | Zulfania Shofa         |zulf20029ti@student.nurulfikri.ac.id           |Zulfaniashofa29                 |                |
