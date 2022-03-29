@@ -54,7 +54,7 @@
 | 2.      | 110220122 | Agita Syafitri                 |           |                 |                |
 | 3.      | 110220066 | Syifa Nuraini Al Rohman        |           |                 |                |
 | 4.      | 110220278 | Elbit Nuriya                   |           |                 |                |
-| 5.      | 110219038 | Muhammad Rafi Maulana          |           |                 |                |
+| 5.      | 110219038 | Muhammad Rafi Maulana          |muha19038ti@student.nurulfikri.ac.id          |  MRafiMaulana               |                |
 | 6.      | 110220134 | Muhammad Fathur Abdullah Azzam |           |                 |                |
 | 7.      | 110219068 | Achmad Izhar                   |           |                 |                |
 
