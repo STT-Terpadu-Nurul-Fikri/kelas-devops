@@ -24,7 +24,7 @@
 | 7.      | 110220174 | Wahid Wahyudin      |           |                 |                |
 
 
-**Kelompok DevOps-3**
+**Kelompok DevOps-3** (Nova)
 
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
@@ -36,7 +36,7 @@
 | 6.      | 110218090 | Fauzan Nugraha Daulay       |fauz18090ti@student.nurulfikri.ac.id|owzan29|                |
 |         |           |                             |           |                 |                |
 
-**Kelompok DevOps-4** (Nova)
+**Kelompok DevOps-4**
 
 | **No.** | **NIM**   | **Nama Lengkap**     | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------|-----------|-----------------|----------------|
