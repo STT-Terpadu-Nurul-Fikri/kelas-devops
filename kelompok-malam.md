@@ -24,7 +24,7 @@
 | 7.      | 110220174 | Wahid Wahyudin      |           |                 |                |
 
 
-**Kelompok DevOps-3**
+**Kelompok DevOps-3** (Nova)
 
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
