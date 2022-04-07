@@ -1,3 +1,3 @@
 # Info Tambahan
 
-Info tambahan akan ditelakkan pada folder etc.
+Info tambahan akan diletakan pada folder etc.
