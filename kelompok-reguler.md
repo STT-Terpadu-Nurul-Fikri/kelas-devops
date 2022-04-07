@@ -20,7 +20,7 @@
 | 4.      | 110220003 | Novita Rahmadhani           |novi20003ti@student.nurulfikri.ac.id           |NovitaRahmadhani              |                |
 | 5.      | 110220138 | Nurul Haya Fathinah         |nuru20138ti@student.nurulfikri.ac.id           |realithy                 |                |
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |zhaf20121ti@student.nurulfikri.ac.id           |zhvyra                 |                |
-| 7.      | 110220258 | Farrel Rizky Ramadhan       |           |                 |                |
+| 7.      | 110220258 | Farrel Rizky Ramadhan       |farr20258ti@student.nurulfikri.ac.id|Farrel20258                |
 
 **Kelompok DevOps-3-(Ironic)
 
