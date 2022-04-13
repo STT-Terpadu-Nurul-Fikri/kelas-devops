@@ -30,7 +30,7 @@
 | 2.      | 110220087 | Chika Aulia Zahwa       | chik20087ti@student.nurulfikri.ac.id          | chikaauli               |                |
 | 3.      | 110220269 | David Octavyanto        | davi20269ti@student.nurulfikri.ac.id          | davidocta123            |                |
 | 4.      | 110220018 | Fatchan Muhammad Hakim  |fatc20018ti@student.nurulfikri.ac.id         |   fatch20018              |                |
-| 5.      | 110220062 | Ikhwan Nurrohman        |ikhw20062ti@student.nurulfikri.ac.id           | ikhwannurohman                |                |
+| 5.      | 110220062 | Ikhwan Nurrohman        |ikhw20062ti@student.nurulfikri.ac.id           | ikhwannurohman                |  Ketua              |
 | 6.      | 110220241 | Mariam                  |mari20241ti@student.nurulfikri.ac.id          |     mariamti02            |                |
 | 7.      | 110220137 | Muhammad Ihsanul Hakiim |           |                 |                |
 
