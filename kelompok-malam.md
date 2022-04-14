@@ -41,7 +41,7 @@
 | **No.** | **NIM**   | **Nama Lengkap**     | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------|-----------|-----------------|----------------|
 | 1.      | 110220022 | Annisa Munajalipah   |  munajalipqhannisaa@gmail.com       |   annisa32              |                |
-| 2.      | 110220010 | Joko Supriyanto      |           |                 |                |
+| 2.      | 110220010 | Joko Supriyanto      | jokobaeh99@gmail.com          |jokosupriyanto22                 |                |
 | 3.      | 110220240 | Mukminun             |           |                 |                |
 | 4.      | 110220207 | Hidayatul ihsan      |           |                 |                |
 | 5.      | 110220092 | Rio Agi              | rioa20092ti@student.nurulfikri.ac.id|        Rioagi18         |                |
