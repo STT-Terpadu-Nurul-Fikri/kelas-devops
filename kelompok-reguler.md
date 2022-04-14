@@ -51,7 +51,7 @@
 | **No.** | **NIM**   | **Nama Lengkap**               | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|--------------------------------|-----------|-----------------|----------------|
 | 1.      | 110220096 | Wanandi                        |   wana20096ti@student.nurulfikri.ac.id        |   wanandi274              |  ketua              |
-| 2.      | 110220122 | Agita Syafitri                 |           |                 |                |
+| 2.      | 110220122 | Agita Syafitri                 |   agit20122ti@student.nurulfikri.ac.id        |   Agita01              |                |
 | 3.      | 110220066 | Syifa Nuraini Al Rohman        |           |                 |                |
 | 4.      | 110220278 | Elbit Nuriya                   |           |                 |                |
 | 5.      | 110219038 | Muhammad Rafi Maulana          |muha19038ti@student.nurulfikri.ac.id          |  MRafiMaulana               |                |
