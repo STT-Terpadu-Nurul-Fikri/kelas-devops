@@ -62,10 +62,10 @@
 
 | **No.** | **NIM**   | **Nama Lengkap**              | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------------|-----------|-----------------|----------------|
-| 1.      | 110220224 | Tamma Yusuf Surya (Ketua)     |tamm20224ti@student.nurulfikri.ac.id         |                 |                |
+| 1.      | 110220224 | Tamma Yusuf Surya             |tamm20224ti@student.nurulfikri.ac.id         |                 |                |
 | 2.      | 110220283 | Muchamad Mufti Ziendani       |much20283ti@student.nurulfikri.ac.id          |MuchamafMufti              |                |
 | 3.      | 110220093 | Hana Syaadah                  |           |                 |                |
 | 4.      | 110220112 | Muhammad Farhan Arieffadhilah |muha20112ti@student.nurulfikri.ac.id           |MFARHANARIEFFADHILAH                 |                |
 | 5.      | 110220036 | Ahmad Wardimas                |ahma20036ti@student.nurulfikri.ac.id          |Ahmad wardimas                 |                |
-| 6.      | 110220098 | Muhamad Rizki                 |muha20098ti@student.nurulfikri.ac.id           | rizkiarch                 |                |
+| 6.      | 110220098 | Muhamad Rizki                 |muha20098ti@student.nurulfikri.ac.id           | rizkiarch                 |   ketua             |
 |         |           |                               |           |                 |                |
