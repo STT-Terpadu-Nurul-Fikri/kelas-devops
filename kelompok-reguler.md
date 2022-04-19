@@ -22,7 +22,7 @@
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |zhaf20121ti@student.nurulfikri.ac.id           |zhvyra                 |                |
 | 7.      | 110220258 | Farrel Rizky Ramadhan       |farr20258ti@student.nurulfikri.ac.id|Farrel20258                |
 
-**Kelompok DevOps-3-(Ironic)
+**Kelompok DevOps-3-(Ironic)**
 
 | **No.** | **NIM**   | **Nama Lengkap**        | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------|-----------|-----------------|----------------|
@@ -58,7 +58,7 @@
 | 6.      | 110220134 | Muhammad Fathur Abdullah Azzam |           |                 |                |
 | 7.      | 110219068 | Achmad Izhar                   |           |                 |                |
 
-**Kelompok DevOps-6-(Trove)
+**Kelompok DevOps-6-(Trove)**
 
 | **No.** | **NIM**   | **Nama Lengkap**              | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------------|-----------|-----------------|----------------|
