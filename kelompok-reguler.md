@@ -1,4 +1,4 @@
-**Kelompok DevOps-1-(contoh-Horizon)**
+**Kelompok DevOps-1-(Horizon)**
 
 | **No.** | **NIM**   | **Nama Lengkap**       | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|------------------------|-----------|-----------------|----------------|
@@ -10,7 +10,7 @@
 | 6.      | 110219026 | Neni Nurhaeni          |neni19026ti@student.nurulfikri.ac.id          |neni01                 |                |
 |         |           |                        |           |                 |                |
 
-**Kelompok DevOps-2**
+**Kelompok DevOps-2-(Cinder)**
 
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
@@ -34,7 +34,7 @@
 | 6.      | 110220241 | Mariam                  |mari20241ti@student.nurulfikri.ac.id          |     mariamti02            |                |
 | 7.      | 110220137 | Muhammad Ihsanul Hakiim |           |                 |                |
 
-**Kelompok DevOps-4-(nova)**
+**Kelompok DevOps-4-(Nova)**
 
 | **No.** | **NIM**   | **Nama Lengkap**           | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------------|-----------|-----------------|----------------|
@@ -46,7 +46,7 @@
 | 6.      | 110220080 | Syauqi Musyaffa Khairullah |syau20080ti@student.nurulfikri.ac.id           |Syauqi024                 |     ketua           |
 | 7.      | 110219070 | Rista Fauji Nafsir         |           |                 |                |
 
-**Kelompok DevOps-5**
+**Kelompok DevOps-5-(Keystone)**
 
 | **No.** | **NIM**   | **Nama Lengkap**               | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|--------------------------------|-----------|-----------------|----------------|
