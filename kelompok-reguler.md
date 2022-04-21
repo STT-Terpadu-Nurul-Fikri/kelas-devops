@@ -1,4 +1,4 @@
-**Kelompok DevOps-1-(contoh-Horizon)**
+**Kelompok DevOps-1-(Horizon)**
 
 | **No.** | **NIM**   | **Nama Lengkap**       | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|------------------------|-----------|-----------------|----------------|
@@ -10,11 +10,11 @@
 | 6.      | 110219026 | Neni Nurhaeni          |neni19026ti@student.nurulfikri.ac.id          |neni01                 |                |
 |         |           |                        |           |                 |                |
 
-**Kelompok DevOps-2**
+**Kelompok DevOps-2-(Cinder)**
 
 | **No.** | **NIM**   | **Nama Lengkap**            | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
-| 1.      | 110220157 | Adriansyah Mahesa Wicaksana |adri20157ti@student.nurulfikri.ac.id           |adrnsyhmahesa                 |                |
+| 1.      | 110220157 | Adriansyah Mahesa Wicaksana |adri20157ti@student.nurulfikri.ac.id           |adrnsyhmahesa                 |        ketua        |
 | 2.      | 110220127 | Farhan Afriansyah           |farh20127ti@student.nurulfikri.ac.id           |Farhanafriansyah02                 |                |
 | 3.      | 110220200 | Faza Tadzkia Nurqolbina     |faza20200ti@student.nurulfikri.ac.id           |FazaTadzkia                 |                |
 | 4.      | 110220003 | Novita Rahmadhani           |novi20003ti@student.nurulfikri.ac.id           |NovitaRahmadhani              |                |
@@ -22,7 +22,7 @@
 | 6.      | 110220121 | Zhafira Aghniya Rahman      |zhaf20121ti@student.nurulfikri.ac.id           |zhvyra                 |                |
 | 7.      | 110220258 | Farrel Rizky Ramadhan       |farr20258ti@student.nurulfikri.ac.id|Farrel20258                |
 
-**Kelompok DevOps-3-(Ironic)
+**Kelompok DevOps-3-(Ironic)**
 
 | **No.** | **NIM**   | **Nama Lengkap**        | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------|-----------|-----------------|----------------|
@@ -34,7 +34,7 @@
 | 6.      | 110220241 | Mariam                  |mari20241ti@student.nurulfikri.ac.id          |     mariamti02            |                |
 | 7.      | 110220137 | Muhammad Ihsanul Hakiim |           |                 |                |
 
-**Kelompok DevOps-4-(nova)**
+**Kelompok DevOps-4-(Nova)**
 
 | **No.** | **NIM**   | **Nama Lengkap**           | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|----------------------------|-----------|-----------------|----------------|
@@ -46,7 +46,7 @@
 | 6.      | 110220080 | Syauqi Musyaffa Khairullah |syau20080ti@student.nurulfikri.ac.id           |Syauqi024                 |     ketua           |
 | 7.      | 110219070 | Rista Fauji Nafsir         |           |                 |                |
 
-**Kelompok DevOps-5**
+**Kelompok DevOps-5-(Keystone)**
 
 | **No.** | **NIM**   | **Nama Lengkap**               | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|--------------------------------|-----------|-----------------|----------------|
@@ -58,14 +58,14 @@
 | 6.      | 110220134 | Muhammad Fathur Abdullah Azzam |           |                 |                |
 | 7.      | 110219068 | Achmad Izhar                   |           |                 |                |
 
-**Kelompok DevOps-6-(Trove)
+**Kelompok DevOps-6-(Trove)**
 
 | **No.** | **NIM**   | **Nama Lengkap**              | **Email** | **Akun Github** | **Keterangan** |
 |---------|-----------|-------------------------------|-----------|-----------------|----------------|
-| 1.      | 110220224 | Tamma Yusuf Surya (Ketua)     |tamm20224ti@student.nurulfikri.ac.id         |                 |                |
+| 1.      | 110220224 | Tamma Yusuf Surya             |tamm20224ti@student.nurulfikri.ac.id         |                 |                |
 | 2.      | 110220283 | Muchamad Mufti Ziendani       |much20283ti@student.nurulfikri.ac.id          |MuchamafMufti              |                |
 | 3.      | 110220093 | Hana Syaadah                  |           |                 |                |
 | 4.      | 110220112 | Muhammad Farhan Arieffadhilah |muha20112ti@student.nurulfikri.ac.id           |MFARHANARIEFFADHILAH                 |                |
 | 5.      | 110220036 | Ahmad Wardimas                |ahma20036ti@student.nurulfikri.ac.id          |Ahmad wardimas                 |                |
-| 6.      | 110220098 | Muhamad Rizki                 |muha20098ti@student.nurulfikri.ac.id           | rizkiarch                 |                |
+| 6.      | 110220098 | Muhamad Rizki                 |muha20098ti@student.nurulfikri.ac.id           | rizkiarch                 |   ketua             |
 |         |           |                               |           |                 |                |
