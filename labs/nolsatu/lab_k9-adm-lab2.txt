@@ -1,0 +1,511 @@
+
+##########################
+##### Lab 2 - K9-ADM #####
+##########################
+
+########################################
+##### Dynamic Storage Provisioning #####
+########################################
+
+##### Eksekusi di node Storage #####
+
+#1 Upgrade paket
+sudo apt update; sudo apt upgrade -y; sudo apt autoremove -y
+
+#2 Install GlusterFS
+sudo apt-get install software-properties-common -y
+wget -O- https://download.gluster.org/pub/gluster/glusterfs/3.12/rsa.pub | sudo apt-key add -
+sudo add-apt-repository ppa:gluster/glusterfs-3.12
+ 
+sudo apt-get update -y
+sudo apt-get install glusterfs-server -y
+sudo apt install thin-provisioning-tools -y
+
+#3 Rename service GlusterFS
+sudo systemctl start glusterd
+sudo systemctl enable glusterd
+
+sudo gluster peer status
+sudo gluster pool list
+
+#4 Install Heketi
+wget https://github.com/heketi/heketi/releases/download/v8.0.0/heketi-v8.0.0.linux.amd64.tar.gz
+tar xzvf heketi-v8.0.0.linux.amd64.tar.gz
+cd heketi
+sudo cp heketi heketi-cli /usr/local/bin/
+
+cd ~
+heketi -v
+
+#5 Create user Heketi
+sudo groupadd -r -g 515 heketi
+sudo useradd -r -c "Heketi user" -d /var/lib/heketi -s /bin/false -m -u 515 -g heketi heketi
+sudo mkdir -p /var/lib/heketi && sudo chown -R heketi:heketi /var/lib/heketi
+sudo mkdir -p /var/log/heketi && sudo chown -R heketi:heketi /var/log/heketi
+sudo mkdir -p /etc/heketi
+
+#6 Install Heketi Client
+wget https://github.com/heketi/heketi/releases/download/v8.0.0/heketi-client-v8.0.0.linux.amd64.tar.gz
+sudo mkdir -p /etc/heketi && sudo tar xzvf heketi-client-v8.0.0.linux.amd64.tar.gz -C /etc/heketi
+export PATH=$PATH:/etc/heketi/heketi-client/bin
+sudo heketi-cli --version
+
+#8 Copy Heketi Client SSH Public Key 
+sudo ssh-keygen -f /etc/heketi/heketi_key -t rsa -N ''
+sudo chown heketi:heketi /etc/heketi/heketi_key*
+sudo ssh-copy-id -i /etc/heketi/heketi_key.pub root@10.X.X.40
+
+* enable root login in podX-storage using password
+
+#9 Add Heketi Configuration
+vim /etc/heketi/heketi.json
+
+...
+{
+	"_port_comment": "Heketi Server Port Number",
+	"port": "8080",
+
+	"_jwt": "Private keys for access",
+	"jwt": {
+		"_admin": "Admin has access to all APIs",
+		"admin": {
+			"key": "[username]-password"
+		},
+		"_user": "User only has access to /volumes endpoint",
+		"user": {
+			"key": "[username]-password"
+		}
+	},
+
+	"_use_auth": "Enable JWT authorization. Please enable for deployment",
+	"use_auth": true,
+
+	"_glusterfs_comment": "GlusterFS Configuration",
+	"glusterfs": {
+		"_executor_comment": [
+			"Execute plugin. Possible choices: mock, ssh",
+			"mock: This setting is used for testing and development.",
+			"      It will not send commands to any node.",
+			"ssh:  This setting will notify Heketi to ssh to the nodes.",
+			"      It will need the values in sshexec to be configured.",
+			"kubernetes: Communicate with GlusterFS containers over",
+			"            Kubernetes exec api."
+		],
+		"executor": "ssh",
+
+		"_sshexec_comment": "SSH username and private key file information",
+		"sshexec": {
+			"keyfile": "/etc/heketi/heketi_key",
+			"user": "root",
+			"port": "22",
+			"fstab": "/etc/fstab"
+		}
+	}
+}
+...
+
+sudo chown heketi:heketi /etc/heketi/heketi.json
+
+#10 Create Heketi User
+vim /etc/systemd/system/heketi.service
+
+...
+[Unit]
+Description=Heketi Server
+Requires=network-online.target
+After=network-online.target
+ 
+[Service]
+Type=simple
+User=heketi
+Group=heketi
+PermissionsStartOnly=true
+PIDFile=/run/heketi/heketi.pid
+Restart=on-failure
+RestartSec=10
+WorkingDirectory=/var/lib/heketi
+RuntimeDirectory=heketi
+RuntimeDirectoryMode=0755
+ExecStart=/usr/local/bin/heketi --config=/etc/heketi/heketi.json
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+ 
+[Install]
+WantedBy=multi-user.target
+...
+
+sudo chmod +x /etc/systemd/system/heketi.service
+
+#11 Start Heketi
+sudo systemctl daemon-reload
+sudo systemctl start heketi.service
+sudo systemctl enable heketi.service
+sudo systemctl status heketi.service
+
+#12 Create topology for GlusterFS
+fdisk -l
+vim /etc/heketi/topology.json
+
+...
+{
+    "clusters": [{
+        "nodes": [{
+            "node": {
+                "hostnames": {
+                    "manage": [
+                        "podX-storage"
+                    ],
+                    "storage": [
+                        "10.X.X.70"
+                    ]
+                },
+                "zone": 1
+            },
+            "devices": [
+                "/dev/vdX"
+            ]
+        }]
+    }]
+}
+...
+
+#13 Setup Heketi
+export HEKETI_CLI_SERVER=http://10.X.X.70:8080
+export HEKETI_CLI_USER=admin
+export HEKETI_CLI_KEY="[username]-password"
+heketi-cli topology load --json=/etc/heketi/topology.json
+
+heketi-cli cluster list
+heketi-cli node list
+
+#J> Screenshot hasil status heketi. Beri nama X-k9-adm-J.png
+
+##### Eksekusi di semua node kubernetes #####
+
+#14 Install glusterfs client
+add-apt-repository ppa:gluster/glusterfs-3.12
+apt-get update -y
+apt-get install glusterfs-client -y
+
+##### Eksekusi di node master #####
+
+#15 Create secret
+echo -n "[username]-password" | base64
+vim gf-secret.yaml
+
+...
+apiVersion: v1
+kind: Secret
+metadata:
+  name: heketi-secret
+  namespace: default
+type: "kubernetes.io/glusterfs"
+data:
+  key: PASSWORD_BASE64_ENCODED
+...
+
+kubectl apply -f gf-secret.yaml
+
+#16 Create Storage Class
+vim gf-class.yaml
+
+...
+kind: StorageClass
+apiVersion: storage.k8s.io/v1beta1
+metadata:
+  name: gluster-heketi-[username]
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://10.X.X.70:8080"
+  restuser: "admin"
+  secretName: "heketi-secret"
+  secretNamespace: "default"
+  volumetype: none
+...
+
+kubectl apply -f gf-class.yaml
+kubectl describe sc
+
+#K> Screenshot hasil dari storageclass. Beri nama X-k9-adm-K.png
+
+#17 Testing create PVC
+vim test-pvc.yaml
+
+...
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: test-pvc
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-heketi-[username]
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+...
+
+kubectl apply -f test-pvc.yaml
+#L> Screenshot hasil dari pvc, pastikan statusnya bound. Beri nama X-k9-adm-L.png
+
+##### Eksekusi di node Storage #####
+
+#18 Cek status storage
+heketi-cli volume list
+sudo gluster volume list
+sudo gluster volume info
+
+##### Eksekusi di node master #####
+
+#19 delete test-pvc
+kubectl delete pvc test-pvc
+
+##### Eksekusi di node Storage #####
+
+#20 Cek status storage
+heketi-cli volume list
+sudo gluster volume list
+sudo gluster volume info
+
+
+##################################
+##### Multi-Tier Application #####
+##################################
+
+#1 Membuat deployment MongoDB (rsvp-db.yaml)
+vim rsvp-db.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rsvp-db
+spec: 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        appdb: rsvpdb
+    spec: 
+      containers:
+      - name: rsvpd-db
+        image: mongo:3.3
+        env:
+        - name: MONGODB_DATABASE
+          value: rsvpdata
+        ports:
+        - containerPort: 27017
+...
+
+kubectl create -f rsvp-db.yaml
+kubectl get deployments
+
+#2 Membuat service MongoDB (rsvp-db-service.yaml)
+vim rsvp-db-service.yaml
+
+...
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: rsvpdb
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+  selector:
+    appdb: rsvpdb
+...
+
+kubectl create -f rsvp-db-service.yaml
+kubectl get services
+
+#3 Membuat deployment rsvp frontend (rsvp-web.yaml)
+vim rsvp-web.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rsvp
+spec: 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rsvp
+    spec:
+      containers:
+      - name: rsvp-app
+        image: teamcloudyuga/rsvpapp
+        env:
+        - name: MONGODB_HOST
+          value: mongodb
+        ports:
+        - containerPort: 5000
+          name: web-port
+...
+
+kubectl create -f rsvp-web.yaml
+kubectl get deployments
+
+#4 Membuat service rsvp frontend (rsvp-web-service.yaml)
+vim rsvp-web-service.yaml
+
+...
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsvp
+  labels:
+    apps: rsvp
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: web-port
+    protocol: TCP
+  selector:
+    app: rsvp
+...
+
+kubectl create -f rsvp-web-service.yaml
+kubectl get services
+
+#5 Scale the frontend
+kubectl get deployments
+kubectl scale --replicas=3 -f rsvp-web.yaml
+kubectl get deployments
+
+#M> Screenshot hasil browser. Beri nama X-k9-adm-M.png
+
+###################
+##### Ingress #####
+###################
+
+#1 Verifikasi operasional service nfs-web dan rsvp
+kubectl get service
+curl http://[IP SERVICE nginx-server]
+curl http://[IP SERVICE rsvp]
+
+#2 Deploy Nginx Ingress Controller untuk kubeadm/baremetal 
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml
+
+#3 Verifikasi Nginx Ingress Controller
+kubectl get pods --all-namespaces -l app=ingress-nginx --watch
+* Ctrl+C untuk mengakhiri monitoring
+
+kubectl -n ingress-nginx get service
+
+#4 Buat ingress rewrite
+vim rewrite.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: rewrite
+  namespace: default
+spec:
+  rules:
+  - host: nfs.myweb.ok
+    http:
+      paths:
+      - backend:
+          serviceName: nginx-server
+          servicePort: 80
+        path: /
+  - host: rsvp.myweb.ok
+    http:
+      paths:
+      - backend:
+          serviceName: rsvp
+          servicePort: 80
+        path: /
+...
+
+kubectl create -f rewrite.yaml
+kubectl get svc --all-namespaces
+
+#5 Edit Service Ingress
+kubectl edit svc -n ingress-nginx ingress-nginx
+
+* tambahkan externalIP
+...
+  selector:
+    app: ingress-nginx
+  externalIPs:
+  - IP-MASTER-LOCAL
+...
+
+#6 Edit /etc/hosts di laptop untuk test
+Windows:
+~ Buka notepad sebagai administrator
+~ Buka file C:\Windows\System32\Drivers\etc\hosts (tipe: All Files)
+IP-MASTER-LOCAL nfs.myweb.ok rsvp.myweb.ok
+~ Simpan file
+
+#7 lakukan multi tunneling [laptop] > [node-gateway] > [node-master]
+ssh -L [sock-port]:localhost:[sock-port] username@[lab0/lab1].nolsatu.id -p 2200
+
+##### di node gateway #####
+ssh -D [sock-port] username@[ip node master]
+
+#8 edit /etc/hosts di node master
+vim /etc/hosts 
+.....
+IP-MASTER-LOCAL nfs.myweb.ok rsvp.myweb.ok
+.....
+
+#9 Browsing ke http://nfs.myweb.ok dan http://rsvp.myweb.ok
+#N> Screenshot hasil browser nfs.myweb.ok Beri nama X-k9-adm-N.png
+#O> Screenshot hasil browser rsvp.myweb.ok Beri nama X-k9-adm-O.png
+
+################
+##### Helm #####
+################
+
+##### di node master #####
+
+#1 Install Helm
+wget https://storage.googleapis.com/kubernetes-helm/helm-v2.13.0-linux-amd64.tar.gz
+tar -zxvf helm-v2.13.0-linux-amd64.tar.gz
+sudo mv linux-amd64/helm /usr/local/bin/helm
+helm init
+helm version
+
+#2 Deploy Wordpress using Helm
+Chart : https://github.com/helm/charts/tree/master/stable/wordpress
+
+wget https://raw.githubusercontent.com/helm/charts/master/stable/wordpress/values-production.yaml
+helm install --name wordpress-[username] -f values-production.yaml --set persistence.storageClass=gluster-heketi-[username] --set persistence.size=2Gi --set service.type=NodePort stable/wordpress --set mariadb.master.persistence.storageClass=gluster-heketi-[username]
+
+#3 Check Service
+kubectl get svc
+
+#4 Check PVC
+kubectl get pvc
+
+#5 Open in Browser
+http://FLOATING_IP_WORKER0:PORT/
+http://FLOATING_IP_WORKER1:PORT/
+
+#P> Screenshot hasil browser. Beri nama X-k9-adm-P.png
+
+##### Quiz #####
+1. buat sebuah deployment dengan image nginx dan replica 1
+2. nama deployment tersebut adalah personal-site-X
+3. buat Ingress dengan url my.website.com
+
+#Q> Screenshot hasil browser my.website.com Beri nama X-k9-adm-Q.png
+
+4. Ingresskan wordpress yang dibangun dengan helm ke blog.[username].com
+
+#R> Screenshot hasil browser blog.[username].com Beri nama X-k9-adm-R.png
+

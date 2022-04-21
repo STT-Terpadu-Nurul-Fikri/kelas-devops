@@ -1,0 +1,284 @@
+##########################
+##### Lab 2 - K9-ADM #####
+##########################
+
+####################
+##### PV & PVC #####
+####################
+
+Referensi: https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs
+
+##### Di node worker0, buat direktori /data #####
+sudo mkdir /data
+
+##### Unduh file manifest untuk deploy NFS server #####
+wget -c https://raw.githubusercontent.com/nolsatuid/labs/master/k9-adm/script/nfs-server.yaml
+vim nfs-server.yaml
+
+---
+    spec:
+      nodeSelector: 
+        kubernetes.io/hostname: node0
+
+ganti node0 dengan nama host worker0 (kubectl get nodes) masing-masing.
+
+##### Di node master, jalankan file nfs-server.yaml #####
+kubectl create -f nfs-server.yaml
+kubectl describe deployment nfs-server
+kubectl describe services nfs-server
+#Catat ClusterIP & PodIP
+
+##### PV Provisioning. Download nfs-pv.yaml dan edit IP server dengan ClusterIP nfs-server #####
+wget -c https://raw.githubusercontent.com/nolsatuid/labs/master/k9-adm/script/pv.yaml
+vim pv.yaml
+.....
+  nfs:
+    # FIXME: use the right IP
+    server: use IP from nfs-server ClusterIP
+path: "/exports"
+
+kubectl create -f pv.yaml
+kubectl get pv
+
+##### PVC #####
+kubectl create -f https://raw.githubusercontent.com/nolsatuid/labs/master/k9-adm/script/pvc.yaml
+kubectl get pvc
+
+##### Instal paket nfs-common di semua node #####
+sudo apt install -y nfs-common
+
+##### Setup apps using pvc #####
+kubectl create -f https://raw.githubusercontent.com/nolsatuid/labs/master/k9-adm/script/nginx.yaml
+
+##### Buat service untuk nginx (nginx-svc.yaml) #####
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-server
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: nginx
+
+kubectl create -f nginx-svc.yaml
+
+##### tambahkan index.html di folder /data di worker0 #####
+sudo su
+echo "this is index file from USERNAME-NOLSATU-X" >> /data/index.html
+
+##### Testing #####
+curl http://podX-master:[XXXXX]
+#I> Screenshot hasil browser. Beri nama X-k9-adm-I.png
+
+##################################
+##### Multi-Tier Application #####
+##################################
+
+##### Membuat deployment MongoDB (rsvp-db.yaml) #####
+vim rsvp-db.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rsvp-db
+spec: 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        appdb: rsvpdb
+    spec: 
+      containers:
+      - name: rsvpd-db
+        image: mongo:3.3
+        env:
+        - name: MONGODB_DATABASE
+          value: rsvpdata
+        ports:
+        - containerPort: 27017
+...
+
+kubectl create -f rsvp-db.yaml
+kubectl get deployments
+
+##### Membuat service MongoDB (rsvp-db-service.yaml) #####
+vim rsvp-db-service.yaml
+
+...
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: rsvpdb
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+  selector:
+    appdb: rsvpdb
+...
+
+kubectl create -f rsvp-db-service.yaml
+kubectl get services
+
+##### Membuat deployment rsvp frontend (rsvp-web.yaml) #####
+vim rsvp-web.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rsvp
+spec: 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rsvp
+    spec:
+      containers:
+      - name: rsvp-app
+        image: teamcloudyuga/rsvpapp
+        env:
+        - name: MONGODB_HOST
+          value: mongodb
+        ports:
+        - containerPort: 5000
+          name: web-port
+...
+
+kubectl create -f rsvp-web.yaml
+kubectl get deployments
+
+##### Membuat service rsvp frontend (rsvp-web-service.yaml) #####
+vim rsvp-web-service.yaml
+
+...
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsvp
+  labels:
+    apps: rsvp
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: web-port
+    protocol: TCP
+  selector:
+    app: rsvp
+...
+
+kubectl create -f rsvp-web-service.yaml
+kubectl get services
+
+##### Scale the frontend #####
+kubectl get deployments
+kubectl scale --replicas=3 -f rsvp-web.yaml
+kubectl get deployments
+
+#J> Screenshot hasil browser. Beri nama X-k9-adm-J.png
+
+###################
+##### Ingress #####
+###################
+
+##### Verifikasi operasional service nfs-web dan rsvp #####
+kubectl get service
+curl http://[IP SERVICE nginx-server]
+curl http://[IP SERVICE rsvp]
+
+##### Deploy Nginx Ingress Controller untuk kubeadm/baremetal #####
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml
+
+##### Verifikasi Nginx Ingress Controller #####
+kubectl get pods --all-namespaces -l app=ingress-nginx --watch
+
+#Ctrl+C untuk mengakhiri monitoring
+
+kubectl -n ingress-nginx get service
+
+##### Buat ingress rewrite #####
+vim rewrite.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: rewrite
+  namespace: default
+spec:
+  rules:
+  - host: nfs.myweb.ok
+    http:
+      paths:
+      - backend:
+          serviceName: nginx-server
+          servicePort: 80
+        path: /
+  - host: rsvp.myweb.ok
+    http:
+      paths:
+      - backend:
+          serviceName: rsvp
+          servicePort: 80
+        path: /
+...
+
+kubectl create -f rewrite.yaml
+kubectl get svc --all-namespaces
+
+##### Edit Service Ingress #####
+kubectl edit svc -n ingress-nginx ingress-nginx
+#tambahkan externalIP
+...
+  selector:
+    app: ingress-nginx
+  externalIPs:
+  - IP-MASTER
+...
+
+
+##### Edit /etc/hosts di laptop untuk test #####
+Windows:
+~ Buka notepad sebagai administrator
+~ Buka file C:\Windows\System32\Drivers\etc\hosts (tipe: All Files)
+IP-MASTER nfs.myweb.ok rsvp.myweb.ok
+~ Simpan file
+
+##### lakukan multi tunneling [laptop] > [node-gateway] > [node-master] #####
+ssh -L [sock-port]:localhost:[sock-port] username@[lab0/lab1].nolsatu.id -p 2200
+
+##### di node gateway #####
+ssh -D [sock-port] username@[ip node master]
+
+##### edit /etc/hosts di node master #####
+vim /etc/hosts 
+.....
+IP-MASTER nfs.myweb.ok rsvp.myweb.ok
+.....
+
+##### Browsing ke http://nfs.myweb.ok dan http://rsvp.myweb.ok #####
+XXXXX adalah port service ingress controller
+
+#K> Screenshot hasil browser nfs.myweb.ok Beri nama X-k9-adm-K.png
+#L> Screenshot hasil browser rsvp.myweb.ok Beri nama X-k9-adm-L.png
+
+
+##### Quiz #####
+1. buat sebuah deployment dengan image nginx dan replica 1
+2. nama deployment tersebut adalah personal-site-X
+3. buat Ingress dengan url my.website.com
+
+#M> Screenshot hasil browser my.website.com Beri nama X-k9-adm-M.png
+

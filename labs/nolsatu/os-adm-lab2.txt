@@ -1,0 +1,159 @@
+##########################
+##### Lab 2 - OS-ADM #####
+##########################
+
+
+##################
+##### Cinder #####
+##################
+
+#### Cinder Volume Attachment BUI ####
+
+Project > Compute > Volume
+Click Create Volume
+Volume Name: vol0
+Description: volume 0
+Volume Source: No Source, Empty Volume
+Type: iscsi
+Size: 1 GB
+
+vol0 > Click Drop Down Menu > Click Manage Attachments
+Attach to instance: instance0
+
+
+#### Verfikasi and Mount Volume Attachment ####
+
+# Akses SSH ke instance0 dari podX-controller
+ssh -l cirros 10.1X.1X.YYY
+
+fdisk -l
+fdisk /dev/vdx
+---------------------
+device | size | type 
+---------------------
+vdx1 	1G 	83 (Linux)
+
+# Format disk baru dengan format ext3 lalu mounting ke direktori /mnt/
+
+#H> Screenshot hasil df -h dan verifkasi type disk lalu simpan file bernama test-from-instance0.txt kedalam volume tersebut. Beri nama X-os-adm-H.png
+
+
+#### Cinder Volume Attachment CLI ####
+
+source /root/keystonerc_admin
+openstack volume list
+openstack volume create --type iscsi --size 1 vol1
+openstack volume list
+openstack server add volume instance1 vol1
+openstack volume list
+openstack server remove volume instance1 vol1
+openstack volume list
+openstack volume delete vol1
+openstack volume list
+
+
+#### Cinder Volume Source Image BUI ####
+
+Project > Compute > Volume
+Click Create Volume
+Volume Name: vol2
+Volume Source: Image
+Use image as a source: cirros0
+Type: iscsi
+Size: 1 GB
+
+Click Launch as Instance
+Instance Name: instance2
+Flavor: m1.tiny
+Instance Boot Source: Boot from volume
+Volume: vol2
+Key Pair: key0
+Security Group: sg0
+Selected networks: net-int0
+
+
+#### Cinder Volume Source Image CLI ####
+
+openstack volume create --image cirros1 --type iscsi --size 1 vol3
+neutron net-list
+openstack server create --flavor m1.tiny --volume vol3 --key-name key1 --security-group sg1 --nic net-id=[copy paste ID net-int1] instance4
+openstack server list
+
+
+#################
+##### Swift #####
+#################
+
+##### Swift Upload Object BUI #####
+
+Project > Object Store > Containers
+Container
+Container Name: container1
+Container Access: Public
+
+Upload file
+Choose File: [upload_file_apapun.txt]
+Upload File
+
+
+##### Swift Upload Object CLI #####
+
+swift stat
+echo "test-file1" > file1.txt
+echo "test-file2" > file2.txt
+echo "test-file3" > file3.txt
+swift upload container-test1 file1.txt
+swift upload container-test1 file2.txt
+swift upload container-test1 file3.txt
+swift list
+swift list container-test1
+rm -rf file*.txt
+
+
+### Download file from Swift container to controller ###
+
+swift download container-test1 file3.txt
+ls
+cat file3.txt
+
+
+### Managing Container ACLs ###
+
+swift list
+swift stat container-test1
+openstack catalog list
+swift post container-test1 --read-acl ".r:*,.rlistings"
+swift stat container-test1
+
+#Masukan output openstack catalog list ke public URL
+curl http://10.X.X.10:8080/v1/AUTH_xxx/container-test1
+curl http://10.X.X.10:8080/v1/AUTH_xxx/container-test1/file1.txt
+
+#I> Screenshot jika container dan object sudah bisa dicurl. Beri nama X-os-adm-I.png
+
+#Keterangan:
+~ .r -> referrer header
+~ * -> any value (IP address or domain name)
+~ .rlistings -> list all objects in the container
+
+
+#### Set expired Object ####
+
+#### Untuk set expired pada object, waktu dan tanggal harus diubah formatnya menjadi Unix Epoch https://www.epochconverter.com/ 
+# Contoh: date --date="[waktu-akan-expired]" +%s
+timedatectl
+date --date="Wed 2018-12-31 23:59:59 WIB" +%s
+1546275599
+
+swift post container-test1 file2.txt -H "X-Delete-At:1546275599"
+swift stat container-test1 file2.txt
+swift list container-test1
+
+#J> Screenshot jika file2.txt sudah diset expired. Beri nama X-os-adm-J.png
+
+##### Quiz #####
+1. Verifikasi replikasi di 3 disk, pastikan test-file1 sudah tersimpan di 2 disk yang berbeda
+2. Set expired pada file1.txt hari Minggu, Tanggal 19 September Tahun 2019, Jam 7 malam 59 Menit lewat 39 Detik, Waktu Indonesia Bagian Barat
+
+#K> Screenshot jika test-file1 sudah ketemu di 2 direktori yang berbeda . Beri nama X-os-adm-K.png
+#L> Screenshot jika file1.txt sudah diset expired. Beri nama X-os-adm-L.png

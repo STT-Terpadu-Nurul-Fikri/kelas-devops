@@ -1,0 +1,239 @@
+##########################
+##### Lab 1 - K9-ADM #####
+##########################
+
+##### Instruksi Environment Lab #####
+0. Saat ada X maka ubah ke nomor absen anda
+1. Buat tiga instance podX-master, pod-worker0, dan podX-worker1 (ns.2-4-20)
+2. Semua instance dibuat dengan image ubuntu-16.04-server-cloudimg-amd64-disk1-20180306.img
+
+#A> Screenshot bagian Network Topology > Topology > Normal. Beri nama X-k9-adm-A.png
+
+##### Pastikan IP UP, Gateway, DNS Resolver, Hostname Sesuai #####
+
+##### Node podX-master #####
+Interface: ens3
+IP Address: 10.X.X.40/24
+Gateway: 10.X.X.1
+
+Hostname: podX-master
+
+##### Node podX-worker0 #####
+Interface: ens3
+IP Address: 10.X.X.50/24
+Gateway: 10.X.X.1
+
+Hostname: podX-worker0
+
+##### Node podX-worker1 #####
+Interface: ens3
+IP Address: 10.X.X.60/24
+Gateway: 10.X.X.1
+
+Hostname: podX-worker1
+
+##### Eksekusi disemua node #####
+
+##### Verifikasi hostname #####
+podX-master 	: podX-master
+podX-worker0 	: podX-worker0
+podX-worker1 	: podX-worker1
+
+##### Verifikasi alamat ip #####
+ip address
+
+##### Edit name resolution  #####
+sudo vim /etc/hosts
+.....
+10.X.X.40 podX-master
+10.X.X.50 podX-worker0
+10.X.X.60 podX-worker1
+
+##### Verifikasi konektivitas #####
+ping -c 3 podX-master
+ping -c 3 podX-worker0
+ping -c 3 podX-worker1
+
+#B> Screenshot bagian verifikasi konektivitas. Beri nama X-k9-adm-B.png
+
+##### Upgrade paket #####
+sudo apt update; sudo apt upgrade -y; sudo apt autoremove -y
+
+##### Instal paket docker.io #####
+sudo apt install -y docker.io; sudo docker version
+
+##### Instal kubectl, kubelet & kubeadm #####
+sudo apt install -y apt-transport-https; curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+vim kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+
+sudo mv kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+sudo apt update; sudo apt install -y kubectl kubelet kubeadm
+
+##### Eksekusi di node master #####
+##### Inisialisasi Master (verifikasi dan matikan swap lebih dulu) #####
+swapon -s
+sudo swapoff -a
+sudo kubeadm init --pod-network-cidr=10.244.X.0/16
+
+##### Salin konfigurasi admin kubernetes #####
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+##### Instal POD Network Flannel #####
+wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f kube-flannel.yml
+kubectl get pods --all-namespaces --watch
+
+#C> Screenshot semua pod jika system sudah running semua. Beri nama X-k9-adm-C.png
+
+##### Verifikasi config dan cluster #####
+kubectl config view
+kubectl cluster-info
+
+##### Tampilkan Token dan token-ca-cert-hash #####
+sudo kubeadm token list
+sudo openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+
+##### Eksekusi di node worker #####
+##### Join Node Worker ke Master (verifikasi dan matikan swap lebih dulu) #####
+swapon -s
+sudo swapoff -a
+sudo kubeadm join --token [TOKEN] [NODE-MASTER]:6443 --discovery-token-ca-cert-hash sha256:[TOKEN-CA-CERT-HASH]
+
+##### Eksekusi di node master #####
+##### verifikasi nodes #####
+kubectl get nodes
+
+#D> Screenshot hasil verifikasi nodes, pastikan Ready/Active. Beri nama X-k9-adm-D.png
+
+##### Test deploy aplikasi #####
+kubectl create namespace sock-shop
+kubectl apply -n sock-shop -f "https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true"
+kubectl -n sock-shop get svc front-end
+kubectl -n sock-shop get pods
+kubectl delete namespace sock-shop
+
+#E> Screenshot tampilan sock-shop di browser jika sudah sukses terdeploy. Beri nama X-k9-adm-E.png
+
+################################
+##### Kubernetes Dashboard #####
+################################
+
+##### Eksekusi di node Master #####
+##### Instal Kubernetes Dashboard #####
+mkdir ~/certs
+kubectl create secret generic kubernetes-dashboard-certs --from-file=$HOME/certs -n kube-system
+kubectl apply -f https://raw.githubusercontent.com/nolsatuid/labs/master/k9-adm/script/kubernetes-dashboard.yaml
+kubectl -n kube-system get pods
+kubectl -n kube-system get svc
+
+##### Set Permissive RBAC Permissions #####
+kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts
+
+##### Menampilkan service account token #####
+kubectl get secrets
+kubectl describe secret [NAMATOKEN]
+
+##### Browsing ke IP master dan port kubernetes-dashboard (HTTPS) #####
+
+#F> Screenshot tampilan kubernetes dashboard. Beri nama X-k9-adm-F.png
+
+#############################
+##### APIs Dengan Proxy #####
+#############################
+
+##### Eksekusi di node master #####
+##### Jalankan proxy #####
+kubectl proxy &
+
+##### Test akses API #####
+curl http://127.0.0.1:8001/
+
+##### Matikan proxy #####
+ps -aux | grep kubectl
+kill [PID kubectl proxy]
+
+
+############################
+##### APIs Tanpa Proxy #####
+############################
+
+##### Eksekusi di node master #####
+##### Get the API Server endpoint #####
+APISERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
+
+##### Get the token #####
+TOKEN=$(kubectl describe secret $(kubectl get secrets | grep default | cut -f1 -d ' ') | grep -E '^token' | cut -f2 -d':' | tr -d '\t')
+
+##### Access the API Server using the curl command, as shown below #####
+curl $APISERVER/api --header "Authorization: Bearer $TOKEN" --insecure
+
+###################################################
+##### Deploying Stand-Alone Application - CLI #####
+###################################################
+
+##### Membuat file YAML Deployment webserver.yaml #####
+vim webserver.yaml
+
+...
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webserver
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - name: webserver
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+...
+
+##### Membuat deployment webserver #####
+kubectl create -f webserver.yaml
+kubectl get deployments
+kubectl get replicasets
+kubectl get pods
+
+
+##### Membuat file YAML Service ServiceType NodePort webserver-svc.yaml #####
+vim webserver-svc.yaml
+
+...
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  labels:
+    run: web-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: webserver 
+...
+
+##### Membuat service #####
+kubectl create -f webserver-svc.yaml
+kubectl get service
+kubectl describe svc web-service
+
+##### Test browsing IP master port maping service #####
+curl http://podX-master:[YYYYY]
+
+#G> Screenshot hasil test browsing. Beri nama X-k9-adm-G.png
+
+##### Quiz #####
+1. Buat sebuah deployment dengan image nginx versi dan replica 1, nama deployment tersebut adalah nginx-X juga pastikan deployment tersebut dideploy di node worker1
+
+#H> Secrenshoot detail dari pod deployment nginx-X. Beri nama X-k9-adm-H.png
+

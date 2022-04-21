@@ -1,0 +1,307 @@
+###################################################
+##### Deploying Stand-Alone Application - CLI #####
+###################################################
+
+
+#1 Hapus deployment webserver
+kubectl delete deployments webserver
+kubectl get deployments
+kubectl get replicasets
+kubectl get pods
+
+
+#2 Membuat file YAML Deployment webserver.yaml
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webserver
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - name: webserver
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+
+
+#3 Membuat deployment webserver
+kubectl create -f webserver.yaml
+kubectl get deployments
+kubectl get replicasets
+kubectl get pods
+
+
+#4 Membuat file YAML Service ServiceType NodePort webserver-svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  labels:
+    run: web-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: webserver 
+
+
+#5 Membuat service
+kubectl create -f webserver-svc.yaml
+kubectl get service
+kubectl describe svc web-service
+
+
+#6 Test browsing IP master port maping service
+curl http://node0:[XXXXX]
+
+
+
+####################
+##### PV & PVC #####
+####################
+
+
+Referensi: https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs
+
+#1 Di node1, buat direktori /data
+sudo mkdir /data
+
+
+#2 Di node0, download dan edit file nfs-server-rc.yaml
+wget -c https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-server-rc.yaml
+
+vim nfs-server-rc.yaml
+.....
+      volumes:
+        - name: mypvc
+          hostPath:
+            path: /data
+
+#3 Di node0, buat nfs-server-rc.yaml dan nfs-server-service.yaml
+kubectl create -f nfs-server-rc.yaml
+kubectl create -f https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-server-service.yaml
+kubectl describe services nfs-server
+#Catat ClusterIP & PodIP
+
+
+#4 PV Provisioning. Download nfs-pv.yaml dan edit IP server dengan ClusterIP nfs-server
+wget -c https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-pv.yaml
+vim nfs-pv.yaml
+.....
+  nfs:
+    # FIXME: use the right IP
+    server: [ClusterIP atau PodIP nfs-server]
+    path: "/exports"
+
+kubectl create -f nfs-pv.yaml
+
+
+#5 PVC
+kubectl create -f https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-pvc.yaml
+
+
+#6 Instal paket nfs-common di node0 dan node1
+sudo apt install -y nfs-common
+
+
+#7 Setup fake backend
+kubectl create -f https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-busybox-rc.yaml
+
+
+#8 Setup web frontend
+kubectl create -f https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-web-rc.yaml
+kubectl create -f https://github.com/kubernetes/examples/raw/master/staging/volumes/nfs/nfs-web-service.yaml
+kubectl describe services nfs-web
+wget -qO- [ClusterIP]
+
+
+
+##################################
+##### Multi-Tier Application #####
+##################################
+
+
+#1 Membuat deployment MongoDB (rsvp-db.yaml)
+vim rsvp-db.yaml
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rsvp-db
+spec: 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        appdb: rsvpdb
+    spec: 
+      containers:
+      - name: rsvpd-db
+        image: mongo:3.3
+        env:
+        - name: MONGODB_DATABASE
+          value: rsvpdata
+        ports:
+        - containerPort: 27017
+
+kubectl create -f rsvp-db.yaml
+kubectl get deployments
+
+
+#2 Membuat service MongoDB (rsvp-db-service.yaml)
+vim rsvp-db-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: rsvpdb
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+  selector:
+    appdb: rsvpdb
+
+kubectl create -f rsvp-db-service.yaml
+kubectl get services
+
+
+#3 Membuat deployment rsvp frontend (rsvp-web.yaml)
+vim rsvp-web.yaml 
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rsvp
+spec: 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rsvp
+    spec:
+      containers:
+      - name: rsvp-app
+        image: teamcloudyuga/rsvpapp
+        env:
+        - name: MONGODB_HOST
+          value: mongodb
+        ports:
+        - containerPort: 5000
+          name: web-port
+
+kubectl create -f rsvp-web.yaml
+kubectl get deployments
+
+
+#4 Membuat service rsvp frontend (rsvp-web-service.yaml)
+vim rsvp-web-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsvp
+  labels:
+    apps: rsvp
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: web-port
+    protocol: TCP
+  selector:
+    app: rsvp
+
+kubectl create -f rsvp-web-service.yaml
+kubectl get services
+
+
+#5 Scale the frontend
+kubectl get deployments
+kubectl scale --replicas=3 -f rsvp-web.yaml
+kubectl get deployments
+
+
+
+###################
+##### Ingress #####
+###################
+
+#1 Verifikasi operasional service nfs-web dan rsvp
+kubectl get service
+curl http://[IP SERVICE nfs-web]
+curl http://[IP SERVICE rsvp]
+
+
+#2 Deploy Nginx Ingress Controller untuk kubeadm/baremetal
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/default-backend.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/configmap.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/tcp-services-configmap.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/udp-services-configmap.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/without-rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml
+
+
+#3 Verifikasi Nginx Ingress Controller
+kubectl get pods --all-namespaces -l app=ingress-nginx --watch
+
+#Ctrl+C untuk mengakhiri monitoring
+
+kubectl -n ingress-nginx get service
+
+
+#4 Buat ingress rewrite
+vim rewrite.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: rewrite
+  namespace: default
+spec:
+  rules:
+  - host: nfs.myweb.ok
+    http:
+      paths:
+      - backend:
+          serviceName: nfs-web
+          servicePort: 80
+        path: /
+  - host: rsvp.myweb.ok
+    http:
+      paths:
+      - backend:
+          serviceName: rsvp
+          servicePort: 80
+        path: /
+
+kubectl create -f rewrite.yaml
+
+
+#5 Edit /etc/hosts di laptop untuk test
+Windows:
+~ Buka notepad sebagai administrator
+~ Buka file C:\Windows\System32\Drivers\etc\hosts (tipe: All Files)
+[ALAMAT_IP_ingress-nginx] nfs.myweb.ok rsvp.myweb.ok
+~ Simpan file
+
+
+#6 Browsing ke http://nfs.myweb.ok dan http://rsvp.myweb.ok
+
+
+
+

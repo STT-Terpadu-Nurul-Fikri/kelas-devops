@@ -1,0 +1,260 @@
+##########################
+##### Install Docker #####
+##########################
+
+#1. Instal Docker
+sudo apt -y install docker.io
+sudo systemctl status docker
+
+#2. Menampilkan versi docker
+sudo docker version
+
+#3. Menampilkan detil instalasi docker
+sudo docker info
+
+#4. Uji instalasi docker
+sudo docker run hello-world
+
+#5. Menampilkan image yang sudah didownload
+sudo docker image ls
+
+#6. Menampilkan semua container (active ataupun exit)
+sudo docker container ls -a
+
+
+
+##########################
+##### whalesay image #####
+##########################
+
+#1. Buka Docker Hub dan cari image whalesay
+https://hub.docker.com
+
+#2. Jalankan image whalesay
+sudo docker run docker/whalesay cowsay boo
+
+#3. Tampilkan image yang sudah didownload
+sudo docker image ls
+
+#4. Tampilkan semua container (upataupun exit)
+sudo docker container ls -a
+
+
+
+##################################
+##### Dockerfile (latihan01) #####
+##################################
+
+#1. Buat direktori /latihan/latihan01 dan masuk ke dalamnya
+sudo mkdir -p /latihan/latihan01
+sudo chown -R student:student /latihan
+cd /latihan/latihan01
+
+
+#2. Buat file Dockerfile
+vim Dockerfile
+
+# Use whalesay image as a base image
+FROM docker/whalesay:latest
+
+# Install fortunes
+RUN apt -y update && apt install -y fortunes
+
+# Execute command
+CMD /usr/games/fortune -a | cowsay
+
+
+#3. Bangun image dari Dockerfile
+sudo docker build -t docker-whale .
+
+#4. Tampilkan image yang sudah dibangun
+sudo docker image ls
+
+#5. Uji jalankan image
+sudo docker run docker-whale
+
+
+
+##################################
+##### Dockerfile (latihan02) #####
+##################################
+
+#1. Buat direktori /latihan/latihan02 dan masuk ke dalamnya
+sudo mkdir -p /latihan/latihan02
+sudo chown -R student:student /latihan
+cd /latihan/latihan02
+
+
+#2. Buat file Dockerfile
+vim Dockerfile
+
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+ADD . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
+
+#3. Buat file requirements.txt
+vim requirements.txt
+
+Flask
+Redis
+
+
+#4. Buat file app.py
+vim app.py
+
+from flask import Flask
+from redis import Redis, RedisError
+import os
+import socket
+
+# Connect to Redis
+redis = Redis(host="redis", db=0, socket_connect_timeout=2, socket_timeout=2)
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    try:
+        visits = redis.incr("counter")
+    except RedisError:
+        visits = "<i>cannot connect to Redis, counter disabled</i>"
+
+    html = "<h3>Hello {name}!</h3>" \
+           "<b>Hostname:</b> {hostname}<br/>" \
+           "<b>Visits:</b> {visits}"
+    return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname(), visits=visits)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=80)
+
+
+#5. Bangun image dari Dockerfile
+ls
+sudo docker build -t friendlyhello .
+
+#6. Tampilkan image yang sudah dibangun
+sudo docker image ls
+
+#7. Uji jalankan image
+sudo docker run -d -p 4000:80 friendlyhello
+
+#8. Tampilkan container Up
+sudo docker container ls
+
+#9. Uji browsing app
+curl http://localhost:4000
+
+#10. Stop container
+sudo docker container stop [CONTAINER ID]
+
+#11. Tampilkan container Up
+sudo docker container ls -a
+
+
+
+#########################
+##### Publish Image #####
+#########################
+
+#1. Jika belum punya Docker ID, register di https://id.docker.com
+
+#2. Login dengan Docker ID
+sudo docker login
+
+#3. Tag image
+sudo docker tag friendlyhello [USERNAME]/latihan:latihan02
+
+#4. Tampilkan image yang sudah dibangun
+sudo docker image ls
+
+#5. Dorong image ke repo
+sudo docker push [USERNAME]/latihan:latihan02
+
+#6. Uji jalankan image
+sudo docker run -d -p 4000:80 [USERNAME]/latihan:latihan02
+
+#7. Tampilkan container Up
+sudo docker container ls
+
+#8. Uji browsing app
+curl http://localhost:4000
+
+#9. Stop container
+sudo docker container stop [CONTAINER ID]
+
+#10. Tampilkan container Up
+sudo docker container ls -a
+
+
+
+###################
+##### Volumes #####
+###################
+
+#1. Membuat volume
+sudo docker volume create my-vol
+
+#2. Menampilkan daftar volume
+sudo docker volume ls
+
+#3. Menampilkan detil volume
+sudo docker volume inspect my-vol
+
+#4. Jalankan container dengan volume
+sudo docker run -d --name=nginxtest -v my-vol:/usr/share/nginx/html nginx:latest
+
+#5. Tampilkan alamat IP container
+sudo docker inspect nginxtest | grep -i ipaddress
+
+#6. Uji browsing ke alamat IP container
+curl http://172.17.XXX.XXX
+
+#7. Buat file index.html dan pindahkan ke direktori source volume
+sudo echo "This is from my-vol source directory" > index.html
+sudo mv index.html /var/lib/docker/volumes/my-vol/_data
+
+#8. Uji browsing ke alamat IP container
+curl http://172.17.XXX.XXX
+
+#9. Jalankan container dengan read-only volume
+sudo docker run -d --name=nginxtest-rovol -v my-vol:/usr/share/nginx/html:ro nginx:latest
+
+#10. Tampilkan detil container nginxtest-rovol dan perhatikan variabel RW di section Mounts
+sudo docker inspect nginxtest-rovol
+
+
+##### Volume Driver #####
+
+#1. SSH ke podX-node1. Buat folder /share dan exit kembali
+ssh -l student 10.X0.X0.11
+sudo mkdir /share
+sudo chmod 777 /share
+exit
+
+#2. Instal plugin sshfs
+sudo docker plugin install --grant-all-permissions vieux/sshfs
+
+#3. Membuat volume dengan driver sshfs
+sudo docker volume create --driver vieux/sshfs -o sshcmd=student@10.X0.X0.11:/share -o password=rahasia sshvolume
+
+#4. Uji jalankan container dengan volume
+sudo docker run -d --name=nginxtest-ssh -v -p 8090:80 sshvolume:/usr/share/nginx/html nginx:latest
+

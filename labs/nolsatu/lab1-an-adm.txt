@@ -1,0 +1,428 @@
+##########################
+##### Lab 1 - AN-ADM #####
+##########################
+
+
+##### Instruksi Environment Lab #####
+0. Saat ada X maka ubah ke nomor absen anda dan [USERNAME] menjadi username nolsatu anda
+1. Buat 3 Instance podX-node1, podX-node2, dan podX-node3 
+2. Spesifikasi masing-masing Instance 2 vCPU dan 4 GB vRAM dan images CentOS-7-x86_64-GenericCloud
+
+#A> Screenshot bagian Network Topology > Topology > Normal. Beri nama X-an-adm-A.png
+
+########## Eksekusi di Semua Node ##########
+
+##### Pastikan IP, Gateway, dan Hostname Sesuai #####
+
+### Node podX-node1 ###
+Interface: eth0
+IP Address: 10.X.X.50/24
+Gateway: 10.X.X.1
+Hostname: podX-node1
+
+### Node podX-node2 ###
+Interface: eth0
+IP Address: 10.X.X.51/24
+Gateway: 10.X.X.1
+Hostname: podX-node2
+
+### Node podX-node3 ###
+Interface: eth0
+IP Address: 10.X.X.52/24
+Gateway: 10.X.X.1
+Hostname: podX-node3
+
+
+-----Verifikasi Konektifitas-----
+ping -c 3 10.X.X.1
+ping -c 3 10.X.X.50
+ping -c 3 10.X.X.51
+ping -c 3 10.X.X.52
+ping -c 3 google.com
+
+
+##### Name Resolution #####
+vi /etc/hosts
+....
+10.X.X.50 podX-node1
+10.X.X.51 podX-node2 web0 db0
+10.X.X.52 podX-node3 web1 db1
+
+###### Instalasi Ansible #####
+
+#Lakukan hanya di podX-node1
+sudo su -
+yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum -y update
+yum -y install ansible
+
+##### Generate dan Copy SSH Key #####
+ssh-keygen
+# Pastikan bisa ssh ke semua server
+
+##### Edit file inventory ansible #####
+vi /etc/ansible/hosts
+
+....
+[webservers]
+web0
+
+[dbservers]
+db0
+
+##### Edit file konfigurasi ansible #####
+vi /etc/ansible/ansible.cfg
+....
+host_key_checking = False
+....
+
+Test eksekusi modul ansible ping
+ansible all -m ping
+
+#B> Screenshot hasil check modul ping. Beri nama X-an-adm-B.png
+
+##### Latihan Ad-Hoc Command #####
+
+---Menampilkan hostname semua node dengan modul command---
+ansible all -m command -a "hostname"
+
+---Menampilkan informasi node---
+ansible web0 -m setup
+
+
+##### Latihan Membuat Playbook #####
+cd ~/playbooks
+vi site.yml
+
+---
+- name: install and start httpd
+  hosts: web0
+
+  tasks:
+  - name: install epel repo
+    yum: name=epel-release state=latest
+
+  - name: install python bindings for selinux
+    yum: name={{item}} state=latest
+    with_items:
+    - libselinux-python
+    - libsemanage-python
+
+  - name: test to see if selinux is running
+    command: getenforce
+    register: sestatus
+    changed_when: false
+
+  - name: install httpd
+    yum: name=httpd state=latest
+    notify: restart httpd
+
+  - name: start httpd service
+    service: name=httpd state=started enabled=yes
+
+  - name: copy index.html
+    template: src=index.html.j2 dest=/var/www/html/index.html
+
+  - name: install firewalld
+    yum: name=firewalld state=latest
+
+  - name: restart dbus to prevent failed start firewalld service
+    service: name=dbus state=restarted
+
+  - name: start firewalld service
+    service: name=firewalld state=started enabled=yes
+
+  - name: insert firewalld rule
+    firewalld: service=http permanent=true state=enabled immediate=yes
+
+  handlers:
+  - name: restart httpd
+    service: name=httpd state=restarted
+
+
+##### index.html.j2 #####
+#Membuat template jinja2
+vi index.html.j2
+....
+Hello World!
+This is [USERNAME]-XX site.
+....
+
+#Run Playbook
+ansible-playbook site.yml
+
+#C> Screenshot hasil run playbook dan hasil browsing ke ip floating server web0. Beri nama X-an-adm-C.png
+
+##### Latihan Membuat Playbook NTP #####
+
+~ instal paket chrony
+~ copy template chrony.conf.j2 ke /etc/chrony.conf. notify handler restart chrony
+~ set timezone ke Asia/Jakarta
+~ handler restart chrony
+
+===chrony.conf.j2===
+....
+[centos@pod26-node2 ~]$ cat /etc/chrony.conf 
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+server 0.pool.ntp.org iburst
+server 1.pool.ntp.org iburst
+server 2.pool.ntp.org iburst
+server 3.pool.ntp.org iburst
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1 second.
+makestep 1.0 3
+
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+
+# Enable hardware timestamping on all interfaces that support it.
+#hwtimestamp *
+
+# Increase the minimum number of selectable sources required to adjust
+# the system clock.
+#minsources 2
+
+# Allow NTP client access from local network.
+#allow 192.168.0.0/16
+
+# Serve time even if not synchronized to a time source.
+#local stratum 10
+
+# Specify file containing keys for NTP authentication.
+#keyfile /etc/chrony.keys
+
+# Specify directory for log files.
+logdir /var/log/chrony
+
+# Select which information is logged.
+#log measurements statistics tracking
+....
+
+Verifikasi SSH ke podX-node2
+systemctl status chronyd
+head /etc/chrony.conf
+timedatectl
+#D> Screenshot hasil verifikasi dan running playbooks. Beri nama X-an-adm-D.png
+
+
+###### Latihan ad-hoc command update semua paket #####
+yum -y install screen
+screen -R update
+
+ansible web0 -m yum -a "name=* state=latest"
+[Ctrl+A, D] -> keluar screen tanpa menutup
+
+screen -ls
+screen -r update
+
+##### Ansible Roles #####
+
+mkdir /latihan
+cd /latihan
+
+---Initialisasi Roles---
+
+mkdir /latihan/roles
+cd /latihan/roles
+
+ansible-galaxy init common
+
+ls -lh
+ls -lh common
+
+
+##### vi /latihan/roles/common/tasks/main.yml #####
+---
+- name: install epel repo
+  yum: name=epel-release state=latest
+
+- include: ntp.yml
+- include: selinux.yml
+
+
+##### vi /latihan/roles/common/tasks/ntp.yml #####
+---
+  - name: install ntp
+    yum: name=chrony state=latest
+
+  - name: copy chronyd template
+    template: src=chrony.conf.j2 dest=/etc/chrony.conf
+    notify: restart chronyd
+
+  - name: start chronyd
+    service: name=chronyd state=started
+
+
+##### vi /latihan/roles/common/tasks/selinux.yml #####
+---
+- name: install python bindings for selinux
+  yum: name={{item}} state=latest
+  with_items:
+  - libselinux-python
+  - libsemanage-python
+
+- name: test to see if selinux is running
+  command: getenforce
+  register: sestatus
+  changed_when: false
+
+
+##### vi roles/common/templates/chrony.conf.j2 #####
+
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+server {{ ntpserver }} iburst
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1 second.
+makestep 1.0 3
+
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+
+# Enable hardware timestamping on all interfaces that support it.
+#hwtimestamp *
+
+# Increase the minimum number of selectable sources required to adjust
+# the system clock.
+#minsources 2
+
+# Allow NTP client access from local network.
+#allow 192.168.0.0/16
+
+# Serve time even if not synchronized to a time source.
+#local stratum 10
+
+# Specify file containing keys for NTP authentication.
+#keyfile /etc/chrony.keys
+
+# Specify directory for log files.
+logdir /var/log/chrony
+
+# Select which information is logged.
+#log measurements statistics tracking
+
+
+
+##### vi roles/common/handlers/main.yml #####
+---
+- name: restart chronyd
+  service: name=chronyd state=restarted
+
+
+mkdir /latihan/group_vars
+
+##### vi /latihan/group_vars/all #####
+---
+ntpserver: 0.pool.ntp.org
+
+
+##### vi /latihan/site.yml #####
+---
+- name: apply the common configuration to all hosts
+  hosts: all
+
+  roles:
+  - common
+
+
+ansible-playbook /latihan/site.yml
+
+#E> Screenshot hasil running playbook dan verifikasi selinux dan konfigurasi /etc/chrony.conf pada host tujuan. Beri nama X-an-adm-E.png 
+
+
+cd /latihan/roles
+ansible-galaxy init httpd
+
+
+##### vi /latihan/roles/httpd/tasks/main.yml #####
+---
+- name: install httpd
+  yum: name=httpd state=latest
+
+- name: create sites directories
+  file: path={{item}} state=directory
+  with_items: "{{httpd_dirs}}"
+
+- name: create sites-available directories
+  file: path={{item}} state=directory
+  with_items: "{{sites_available}}"
+
+- name: create sites-enabled directories
+  file: path={{item}} state=directory
+  with_items: "{{sites_enabled}}"
+
+- name: copy an index.html
+  template: src=index.html.j2 dest={{httpd_docroot}}/index.html
+
+- name: copy httpd configuration
+  template: src=httpd.conf-{{ansible_os_family}}.j2 dest={{httpd_config}}
+  notify: restart httpd
+
+- name: start httpd service
+  service: name=httpd state=started enabled=yes
+
+
+##### vi /latihan/group_vars/webservers #####
+---
+iface: '{{ ansible_default_ipv4.interface }}'
+
+httpd_test_message: This is a test from [USERNAME]-XX
+httpd_max_keep_alive_requests: 115
+httpd_docroot: /var/www/html
+httpd_dirs: /var/www/html/sites
+httpd_config: /etc/httpd/conf/httpd.conf
+sites_available: /etc/httpd/conf/sites-available
+sites_enabled: /etc/httpd/conf/sites-enabled
+
+lameapp_version: 1.1
+
+
+##### vi /latihan/roles/httpd/templates/index.html.j2 #####
+
+{{ httpd_test_message }} {{ ansible_distribution }} {{ ansible_distribution_version }} <br>
+Current Host: {{ ansible_hostname }} <br>
+Server list: <br>
+{% for host in groups.webservers %}
+{{ host }} <br>
+{% endfor %}
+
+# ls -lh /latihan/roles/httpd/templates/httpd.conf-RedHat.j2
+# atau lihat httpd-conf-RedHat.j2 di https://gist.github.com/sdmoko/d5b2e18d89aa6a76fac3686f9bb0cedf
+
+##### vi /latihan/roles/httpd/handlers/main.yml #####
+---
+- name: restart httpd
+  service: name=httpd state=restarted
+
+
+##### vi /latihan/site.yml #####
+---
+- name: apply the common configuration to all hosts
+  hosts: all
+
+  roles:
+  - common
+
+- name: apply the httpd
+  hosts: webservers
+
+  roles:
+  - httpd
+
+
+ansible-playbook site.yml
+
+#F> Screenshot hasil running playbook dan verifikasi akses podX-node2 pada browser. Beri nama X-an-adm-F.png 
+
+#QUIZ
+#G> Jalankan ad-hoc command untuk mendapatkan informasi distribution yang digunakan. Beri nama X-an-adm-G.png
+

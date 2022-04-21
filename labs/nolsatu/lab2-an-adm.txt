@@ -1,0 +1,219 @@
+##########################
+##### Lab 2 - AN-ADM #####
+##########################
+
+
+Login pada podX-node1
+
+sudo su -
+cd /latihan/roles
+ansible-galaxy init web
+
+
+##### vi /latihan/roles/web/tasks/main.yml #####
+---
+- name: install git
+  yum: name=git state=latest
+
+- name: checkout lameapp
+  git: repo=https://github.com/jsmartin/lameapp.git version="{{lameapp_version|string}}" dest=/var/www/lameapp
+
+- name: set permission on the app
+  file: name=/var/www/lameapp/lame.py mode=0755
+
+- name: set selinux context on the app
+  command: chcon -t httpd_sys_script_exec_t /var/www/lameapp/lame.py
+
+- name: create directory sites_available
+  file: name={{sites_available}} state=directory
+
+- name: create directory sites_enabled
+  file: name={{sites_enabled}} state=directory
+
+- name: add lameapp httpd config file
+  copy: src=lameapp.conf dest={{sites_available}}
+
+- name: link app config
+  file: src="{{sites_available}}/lameapp.conf" dest="{{sites_enabled}}/lameapp.conf" state=link
+  notify: restart httpd
+
+- meta: flush_handlers
+
+- name: check for proper response
+  uri:
+    url: http://localhost/lame
+    return_content: yes
+  register: result
+  until: '"Hello Moon!" in result.content'
+
+
+##### vi /latihan/roles/web/files/lameapp.conf #####
+
+<Directory /var/www/lameapp>
+Options +ExecCGI
+AddHandler cgi-script .py
+</Directory>
+
+ScriptAlias /lame "/var/www/lameapp/lame.py"
+
+
+##### vi /latihan/roles/web/handlers/main.yml #####
+---
+- name: restart httpd
+  service: name=httpd state=restarted
+
+
+##### vi /latihan/site.yml #####
+---
+- name: apply the common configuration to all hosts
+  hosts: all
+
+  roles:
+  - common
+
+- name: apply the httpd and the web
+  hosts: webservers
+
+  roles:
+  - httpd
+  - web
+
+
+cd /latihan/roles
+ansible-galaxy init mariadb
+
+
+##### vi /latihan/roles/mariadb/tasks/main.yml #####
+---
+- name: install mariadb package
+  yum: name={{item}} state=latest
+  with_items:
+  - mariadb-server
+  - MySQL-python
+
+- name: configure selinux to start mariadb on any port
+  seboolean: name=mysql_connect_any state=true persistent=yes
+
+- name: create mariadb configuration file
+  template: src=my.cnf.j2 dest=/etc/my.cnf
+  notify: restart mariadb
+
+- name: create mariadb log file
+  file: path=/var/log/mysqld.log state=touch owner=mysql group=mysql
+
+- name: create mariadb PID directory
+  file: path=/var/run/mysqld state=directory owner=mysql group=mysql
+
+- name: start mariadb service
+  service: name=mariadb state=started enabled=yes
+
+- name: insert firewalld rule
+  firewalld: port={{mysql_port}}/tcp permanent=true state=enabled immediate=yes
+
+- name: copy mariadb root password file
+  template: src=.my.cnf.j2 dest=~/.my.cnf
+
+- name: set db root password
+  mysql_user: name=root password={{dbrootpasswordnew}}
+
+- name: delete test database
+  mysql_db: name=test login_user=root login_password={{dbrootpasswordnew}} state=absent
+
+- name: create application database
+  mysql_db: name={{dbname}} login_user=root login_password={{dbrootpasswordnew}} state=present
+
+- name: create application database user
+  mysql_user: name={{dbuser}} password={{dbpassword}} login_user=root login_password={{dbrootpasswordnew}} priv='*.*:ALL'
+
+
+##### vi /latihan/roles/mariadb/templates/my.cnf.j2 #####
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+symbolic-links=0
+port={{mysql_port}}
+
+[mysqld_safe]
+log-error=/var/log/mariadb/mariadb.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+
+##### vi /latihan/roles/mariadb/handlers/main.yml #####
+---
+- name: restart mariadb
+  service: name=mariadb state=restarted
+
+
+##### vi /latihan/group_vars/dbservers #####
+mysql_port: 3306
+dbrootpassword: 
+dbrootpasswordnew: RAHASIA
+dbname: training
+dbuser: student
+dbpassword: secret
+
+
+##### vi /latihan/roles/mariadb/templates/.my.cnf.j2 #####
+[client]
+user=root
+password="{{dbrootpassword}}"
+
+[mysql]
+user=root
+password="{{dbrootpassword}}"
+
+
+##### vi /latihan/site.yml #####
+---
+.........
+- name: apply the database configuration
+  hosts: dbservers
+
+  roles:
+  - mariadb
+
+
+########### Ansible Vault ###########
+
+---Enkripsi file---
+cd /latihan
+cat group_vars/dbservers
+ansible-vault encrypt group_vars/dbservers
+cat group_vars/dbservers
+
+---Eksekusi playbook---
+ansible-playbook --ask-vault-pass site.yml
+
+#H> Screenshot hasil roles, pastikan tidak ada error. Beri nama X-an-adm-H.png
+#I> Screenshot dari podX-node2 ke http://localhost/lame dan akses ke mysql-server lalu show database. Beri nama X-an-adm-I.png
+
+---Edit file terenkripsi---
+ansible-vault edit group_vars/dbservers
+
+---Ganti password enkripsi---
+ansible-vault rekey group_vars/dbservers
+
+---Dekripsi file---
+cat group_vars/dbservers
+ansible-vault decrypt group_vars/dbservers
+cat group_vars/dbservers
+
+#J> Screenshot perbandingan sesudah dan sebelum diencrypt. Beri nama X-an-adm-J.png
+
+#QUIZ
+0. Tambahkan web1 dan db1 pada kategori masing-masing di /etc/ansible/hosts.
+1. Ubah playbooks site.yml (lab1) pada ~/playbooks agar hostnya menjadi web1, lalu jalankan ke web1.
+2. Ubah variabel pada /latihan/group_vars/webservers
+```
+httpd_test_message: This is a test from podX-node3 [USERNAME-XX]
+```
+3. Lalu ubah variabel pada /latihan/group_vars/dbservers 
+```
+dbname: trainingpodX
+```
+4. Lalu sesuaikan host pada /latihan/site.yml agar hanya berjalan pada web1 dan db1. Lalu eksekusi playbooks pada /latihan/site.yml.
+
+#K> screenshot isi /etc/ansible/hosts. Beri nama X-an-adm-K.png
+#L> screenshot perbandingan hasil akses ke floating ip http://podX-node2,http://podX-node2/lame dan http://podX-node3,http://podX-node3/lame. Beri nama X-an-adm-L.png
+#M> screenshot perbandingan daftar database pada podX-node2 dan podX-node3. Beri nama X-an-adm-M.png

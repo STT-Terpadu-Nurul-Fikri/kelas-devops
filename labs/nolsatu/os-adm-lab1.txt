@@ -1,0 +1,413 @@
+##########################
+##### Lab 1 - OS-ADM #####
+##########################
+
+##### Instruksi Environment Lab #####
+0. Saat ada X maka ubah ke nomor absen anda
+1. Buat 2 Network dengan nama podX-management & podX-external
+2. Buat 1 Router dengan nama router-X
+3. Buat 1 Key Pair dengan nama key-[username]
+3. Buat 2 Instance dengan nama podX-controller (ns.4-8-20) & podX-compute0 (ns.4-4-20) Images: CentOS-7-x86_64-GenericCloud (Create New Volume: No)
+4. Buat 1 Volume dengan nama vol-X sebesar 8 GB lalu attach ke podX-controller
+
+#A> Screenshot bagian Network Topology > Topology > Normal. Beri nama X-os-adm-A.png
+
+##### Pastikan IP UP, Gateway, DNS Resolver, Hostname Sesuai #####
+
+##### Node podX-controller #####
+Interface: eth0	
+IP Address: 10.X.X.10/24
+Gateway: 10.X.X.1
+Interface: eth1
+IP Address: 10.1X.1X.10/24
+Hostname: podX-controller
+
+##### Node podX-compute0 #####
+Interface: eth0
+IP Address: 10.X.X.20/24
+Interface: eth1
+IP Address: 10.1X.1X.20/24
+Hostname: podX-compute0
+
+##### Eksekusi di Node podX-controller dan podX-compute0 #####
+
+ip address
+ip route
+cat /etc/resolv.conf
+
+
+---Verifikasi Konektifitas---
+ping -c 3 10.X.X.1
+ping -c 3 10.X.X.10
+ping -c 3 10.X.X.20
+ping -c 3 10.1X.1X.1
+ping -c 3 10.1X.1X.10
+ping -c 3 10.1X.1X.20
+ping -c 3 yahoo.com
+
+
+##### Name Resolution #####
+vi /etc/hosts
+
+.....
+10.X.X.10 podX-controller
+10.X.X.20 podX-compute0
+
+
+##### Repositori #####
+yum -y update
+[ ! -d /etc/yum.repos.d.orig ] && cp -vR /etc/yum.repos.d /etc/yum.repos.d.orig
+yum -y install centos-release-openstack-queens epel-release
+yum repolist
+yum -y update
+
+
+##### NTP #####
+yum -y install chrony
+systemctl enable chronyd.service
+systemctl restart chronyd.service
+systemctl status chronyd.service
+chronyc sources
+
+
+##### Networking #####
+systemctl enable network.service
+systemctl restart network.service
+systemctl status network.service
+
+
+##### Paket Utilities #####
+yum -y install vim wget screen crudini htop
+
+
+##### Eksekusi di Node podX-controller #####
+
+##### Buat Partition Table di Disk yang telah di Attach #####
+fdisk /dev/vdx
+
+---------------------
+device | size | type
+---------------------
+vdx1 	5G 	8e (Linux LVM)
+vdx2 	1G 	83 (Linux)
+vdx3 	1G 	83 (Linux)
+vdx4 	1G 	83 (Linux)
+
+partprobe
+
+##### LVM untuk Cinder #####
+yum -y install lvm2
+pvcreate -f /dev/vdx1
+pvs
+vgcreate -f cinder-volumes /dev/vdx1
+vgs
+
+##### XFS untuk Swift #####
+mkfs.xfs /dev/vdx2
+mkfs.xfs /dev/vdx3
+mkfs.xfs /dev/vdx4
+
+
+#####################
+##### Packstack #####
+#####################
+
+
+##### Instal Paket Packstack #####
+yum -y install openstack-packstack python-tools python-setuptools
+
+
+##### Generate, Sunting, dan Sesuaikan Packstack Answer File #####
+packstack --gen-answer-file=paf-os-adm-lab1.txt
+
+vim paf-os-adm-lab1.txt
+
+CONFIG_CEILOMETER_INSTALL=n
+CONFIG_AODH_INSTALL=n
+CONFIG_MANILA_INSTALL=n
+CONFIG_COMPUTE_HOSTS=10.X.X.20
+#CONFIG_KEYSTONE_ADMIN_PW=9288844cb55f4c64
+CONFIG_KEYSTONE_ADMIN_PW=rahasia
+#CONFIG_NOVA_LIBVIRT_VIRT_TYPE=%{::default_hypervisor}
+CONFIG_NOVA_LIBVIRT_VIRT_TYPE=qemu
+CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:eth1
+CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE=br-ex
+CONFIG_PROVISION_DEMO=n
+CONFIG_CINDER_VOLUMES_CREATE=n
+CONFIG_SWIFT_STORAGES=/dev/vdx2,/dev/vdc3,/dev/vdc4
+CONFIG_SWIFT_STORAGE_REPLICAS=2
+CONFIG_SWIFT_STORAGE_FSTYPE=xfs
+
+
+screen -R packstack
+
+packstack --answer-file=paf-os-adm-lab1.txt
+
+### Tunggu proses pakcstacking: ~25-45 menit
+### Keluar screen tanpa mematikan: tekan Ctrl+A kemudian tekan D
+### Menampilkan screen yang aktif: screen -ls
+### Kembali ke screen packstack: screen -r packstack
+
+
+#################################
+##### Post Deploy Packstack #####
+#################################
+
+
+##### Post Deploy Node podX-controller #####
+
+#00. Metadata DHCP Agent
+crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
+systemctl restart neutron-dhcp-agent
+systemctl status neutron-dhcp-agent
+
+#01. Update ServerAlias Horizon
+sudo vim /etc/httpd/conf.d/15-horizon_vhost.conf 
+.....
+ServerAlias [Floating_IP_podX-controller]
+.....
+
+sudo systemctl restart httpd  
+
+##### Post Deploy Node podX-compute0 #####
+
+#01. Error: Failed to connect socket to '/var/run/libvirt/virtlogd-sock' Solusi: Aktifkan dan jalankan service virtlogd
+systemctl status virtlogd
+systemctl enable virtlogd
+systemctl restart virtlogd
+systemctl status virtlogd
+
+
+#02. Set Proxy Client
+crudini --set /etc/nova/nova.conf vnc vncserver_proxyclient_address 10.X.X.20
+systemctl restart openstack-nova-compute
+systemctl status openstack-nova-compute
+
+
+###############
+##### BUI #####
+###############
+
+
+##### SSH Tunnel #####
+#0. Lakukan SSH Tunnel ke server labx.nolsatu.id
+
+#1. Jalankan web browser lalu buka alamat http://IP-podX-controller/dashboard
+
+#B> Screenshot form Log in OpenStack. Beri nama X-os-adm-B.png
+
+#2. Login as admin with password on file
+cat /root/keystonerc_admin
+
+#3. Create images
+Unduh image cirros dari PC/Laptop
+https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+
+Admin > Compute > Images
+Click Create Image
+Image Name: cirros0
+Source Type: File
+File: Browse: cirros-0.4.0-x86_64-disk.img
+Format: QCOW2 - QEMU Emulator
+Create Image
+
+#4. Create external network
+Admin > Network > Networks
+Click Create Network
+Name: net-ext
+Project: admin
+Provider Network Type: Flat
+Physical Network: extnet
+Segmentation ID: [kosongkan]
+Admin State: UP
+Shared: Checked
+External Network: Checked
+Submit
+
+#5. Create external subnet
+Admin > Network > Networks
+Click net-ext > Subnets
+Click Create Subnet
+Subnet Name: subnet-ext
+Network Address: 10.1X.1X.0/24
+IP Version: IPv4
+Gateway IP: 10.1X.1X.1
+Disable Gateway: Unchecked
+Enable DHCP: Unchecked
+Allocation Pools: 10.1X.1X.100,10.1X.1X.199
+DNS Name Servers: 10.1X.1X.1
+
+#6. Create internal network & subnet
+Project > Network > Networks
+Click Create Network
+Network Name: net-int0
+Admin State: UP
+Shared: Unchecked
+Create Subnet: Checked
+Subnet Name: subnet-int0
+Network Address: 192.168.X.0/24
+IP Version: IPv4
+Gateway IP: 192.168.X.1
+Disable Gateway: Unchecked
+Enable DHCP: Checked
+Allocation Pools: 192.168.X.100,192.168.X.199
+DNS Name Servers: 10.1X.1X.1
+
+#7. Create router
+Project > Network > Routers
+Click Create Router
+Router Name: router0
+Admin State: UP
+External Network: net-ext
+
+Click router0
+Click Interfaces
+Click Add Interface
+Subnet: subnet-int0
+
+Dari Host podX-controller ping port net-ext router0
+ping -c 3 10.1X.1X.YYY
+
+#8. Add SSH key
+Project > Compute > Key Pairs
+Click Import Key Pair
+Key Pair Name: key0
+Public Key: [paste SSH public key]
+
+#9. Add security group rules
+Project > Network > Security Groups
+Click Create Security Group
+Name: sg0
+Description: My security group 0
+Click Manage Rules on sg0
+
+Click Add Rule
+Rule: ALL ICMP
+Direction: Ingress
+Remote: CIDR
+CIDR: 0.0.0.0/0
+
+Click Add Rule
+Rule: SSH
+Remote: CIDR
+CIDR: 0.0.0.0/0
+
+#10. Launch instance
+Project > Compute > Instances
+Click Launch Instance
+Instance Name: instance0
+Source: Select Boot Source: Image
+Create New Volume: No
+Image Name: cirros0
+Flavor: m1.tiny
+Selected networks: net-int0
+Security Group: sg0
+Key Pair: key0
+Launch Instance
+
+#11. Floating IP address
+instance0 > Click Drop Down Menu
+Click Associate Floating IP
+Click + Alocate Floating IP
+Pool: net-ext
+Click Allocate IP
+IP Address: 10.1X.1X.1YY
+Port to be associated: instance0 192.168.X.1YY
+
+
+###############
+##### CLI #####
+###############
+
+#12. Login as admin with password on file
+cat /root/keystonerc_admin
+source /root/keystonerc_admin
+
+#13. Create images
+openstack image list
+wget -c https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+openstack image create --disk-format qcow2 --file cirros-0.4.0-x86_64-disk.img --protected --public cirros1
+openstack image list
+
+#14. Create external network [SKIP - langkah ini tidak perlu di Eksekusi]
+openstack network list
+neutron net-create net-ext --provider:network_type flat --provider:physical_network extnet --shared --router:external
+openstack network list
+
+#15. Create external subnet [SKIP - langkah ini tidak perlu di Eksekusi]
+openstack subnet list
+neutron subnet-create net-ext 10.1X.1X.0/24 --name subnet-ext --gateway 10.1X.1X.1 --disable-dhcp --allocation-pool start=10.1X.1X.100,end=10.1X.1X.199 --dns-nameserver 10.1X.1X.1
+openstack subnet list
+
+#16. Create internal network
+openstack network list
+openstack network create net-int1
+openstack network list
+
+#17. Create internal subnet
+openstack subnet list
+openstack subnet create --network net-int1 --subnet-range 192.168.1X.0/24 --gateway 192.168.1X.1 --allocation-pool start=192.168.1X.100,end=192.168.1X.199 --dns-nameserver 10.1X.1X.1 subnet-int1
+openstack subnet list
+openstack network list
+
+#18. Create router
+openstack router list
+openstack router create router1
+openstack router set --external-gateway net-ext router1
+openstack router add subnet router1 subnet-int1
+openstack router list
+openstack port list --router router1
+
+Dari Host podX-controller ping port net-ext router1
+ping -c 3 10.1X.1X.YYY
+
+#C> Screenshot saat sudah sukses ping ke port net-ext router1. Beri nama X-os-adm-C.png
+
+#19. Add SSH key
+openstack keypair list
+openstack keypair create --public-key /root/.ssh/id_rsa.pub key1
+openstack keypair list
+
+#20. Add security group rules
+openstack security group list
+openstack security group create sg1 --description 'my security group 1'
+openstack security group list
+openstack security group rule list sg1
+openstack security group rule create --proto tcp --dst-port 22 sg1
+openstack security group rule list sg1
+
+#21. Launch instance
+openstack server list
+openstack flavor list
+openstack image list
+openstack security group list
+openstack keypair list
+neutron net-list
+openstack server create --flavor m1.tiny --image cirros1 --key-name key1 --security-group sg1 --nic net-id=[copy paste ID net-int1] instance1
+openstack server list
+
+#22. Floating IP address
+openstack floating ip list
+openstack floating ip create net-ext
+openstack floating ip list
+openstack server list
+openstack server add floating ip instance1 10.1X.1X.YYY
+openstack server list
+openstack floating ip list
+
+#23 Verifikasi SSH ke instance1
+ssh -l cirros 10.1X.1X.YYY
+ip addr
+cat /etc/hostname
+
+#D> Screenshot saat sudah sukses ssh ke instance1. Beri nama X-os-adm-D.png
+
+##### Quiz #####
+
+1. Buat Instance di dalam Lab OpenStack kalian dengan nama instance3 lalu pastikan bisa saling ping dengan instance1
+2. Buat Flavor baru dengan spesifikasi sebagai berikut: Name: nice-flavor, RAM: 512 MB, VCPU: 1 , Disk: 3 GB, Ephemeral: 0, Swap: 0
+3. Setelah Quiz no. 1 selesai hapus images cirros1
+
+#E> Screenshot jika kedua Instance sudah bisa saling ping tanpa floating IP's. Beri nama X-os-adm-E.png
+#F> Screenshot jika Flavor baru sudah berhasil dibuat melalui CLI. Beri nama X-os-adm-F.png
+#G> Screenshot jika Images cirros1 sudah berhasil dihapus. Beri nama X-os-adm-G.png

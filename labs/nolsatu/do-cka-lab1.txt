@@ -1,0 +1,165 @@
+#######################################
+##### Instal Kubernetes (kubeadm) #####
+#######################################
+
+
+#1 Verifikasi alamat ip (eth0) masing-masing node
+ip address
+
+
+#2 Edit name resolution (X adalah nomor pod masing-masing)
+sudo vim /etc/hosts
+.....
+10.X0.X0.10 node0
+10.X0.X0.11 node1
+
+
+sudo vim /etc/hostname
+node0 atau node1
+
+sudo reboot
+
+ping node0
+ping node1
+
+
+#3 Upgrade paket
+sudo apt update; sudo apt upgrade -y; sudo apt autoremove -y
+
+
+#4 Instal paket docker.io
+sudo apt install -y docker.io; sudo docker version
+
+
+#5 Instal kubectl, kubelet & kubeadm
+sudo apt install -y apt-transport-https; curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+cat <<EOF > kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+sudo mv kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+sudo apt update; sudo apt install -y kubectl kubelet kubeadm
+
+
+#6 Di node0, inisialisasi master (verifikasi dan matikan swap lebih dulu)
+swapon -s
+sudo swapoff -a
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+
+#7 Di node0, copy konfigurasi admin kubernetes
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+#8 Di node0, instal pod network flannel
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl get pods --all-namespaces --watch
+
+#Tunggu sampai status pod kube-dns menjadi running (~5 menit)
+
+
+#9 Di node0, verifikasi config dan cluster
+kubectl config view
+kubectl cluster-info
+
+
+#10 Di node0, tampilkan token dan token-ca-cert-hash
+sudo kubeadm token list
+sudo openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+
+
+#11 Di node1, join ke master (verifikasi dan matikan swap lebih dulu)
+swapon -s
+sudo swapoff -a
+sudo kubeadm join --token [TOKEN] node0:6443 --discovery-token-ca-cert-hash sha256:[TOKEN-CA-CERT-HASH]
+
+
+#12 Di node0, verifikasi nodes
+kubectl get nodes
+
+#Tunggu sampai status worker menjadi Ready (~5 menit)
+
+
+#13 Di node0, test deploy aplikasi
+kubectl create namespace sock-shop
+kubectl apply -n sock-shop -f "https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true"
+kubectl -n sock-shop get svc front-end
+kubectl -n sock-shop get pods
+
+#Tunggu sampai status pods sock-shop menjadi running (~5), kemudian browsing IP master dan port aplikasi (http://[node0]:30001)
+
+kubectl delete namespace sock-shop
+
+
+
+################################
+##### Kubernetes Dashboard #####
+################################
+
+
+#1 Instal Kubernetes Dashboard
+mkdir ~/certs
+kubectl create secret generic kubernetes-dashboard-certs --from-file=$HOME/certs -n kube-system
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+kubectl -n kube-system get pods
+kubectl -n kube-system get svc
+
+
+#2 Edit type: ClusterIP menjadi type: NodePort
+kubectl -n kube-system edit service kubernetes-dashboard
+kubectl -n kube-system get service kubernetes-dashboard
+
+
+#3 [TIDAK DIREKOMENDASIKAN] Set Permissive RBAC Permissions
+kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts
+
+
+#4 Menampilkan service account token
+kubectl get secrets
+kubectl describe secret [NAMATOKEN]
+
+
+#5 Browsing ke IP node0 dan port kubernetes-dashboard (HTTPS)
+
+
+
+#############################
+##### APIs Dengan Proxy #####
+#############################
+
+
+#1. Jalankan proxy
+kubectl proxy &
+
+
+#2. Test akses API
+curl http://127.0.0.1:8001/
+
+
+#3. Matikan proxy
+ps -aux | grep kubectl
+kill [PID kubectl proxy]
+
+
+
+############################
+##### APIs Tanpa Proxy #####
+############################
+
+
+#1 Get the API Server endpoint
+APISERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
+
+
+#2 Get the token
+TOKEN=$(kubectl describe secret $(kubectl get secrets | grep default | cut -f1 -d ' ') | grep -E '^token' | cut -f2 -d':' | tr -d '\t')
+
+
+#3 Access the API Server using the curl command, as shown below
+curl $APISERVER/api --header "Authorization: Bearer $TOKEN" --insecure
+
+
+
+
+
