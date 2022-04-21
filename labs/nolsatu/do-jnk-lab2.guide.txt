@@ -1,0 +1,63 @@
+##########################
+##### Lab 2 Jenkins ######
+##########################
+ 
+### Install plugins Pipeline maven
+Jenkins -> Manage Jenkins
+Manage Plugins
+Avaiable -> Pipeline Maven Integration
+Download Now Install -> Restart	
+
+### Install Blue Ocean 
+Jenkins -> Manage Jenkins
+Manage Plugins
+Avaiable -> Blue Ocean
+Download Now Install -> Restart
+
+
+
+### Buat Pipeline dengan jenkinsfile
+# Pada repo simple-maven-app lab1 buat berkas baru pada root direktori repo dengan nama Jenkinsfile dengan isi berkas seperti berikut
+vim Jenkinsfile
+
+pipeline {
+    agent any
+    tools {
+        maven 'maven'
+        jdk 'jdk'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+    }
+}
+
+# Lalu push ke repo
+
+### Buka Jenkins Blue Ocean dengan cara
+# Login pada jenkins lalu cek menu sebelah kiri, klik Open Blue Ocean
+# atau buka dengan url http://ip-jenkins/blue
+
+### Membuat pipeline
+Klik New Pipeline
+Where do you store your code: Github
+Connect to github: isi token dengan generate dari link Create an access key here
+Connect
+Pilih Organisasi
+Pilih repo
+Create pipeline
+
+
