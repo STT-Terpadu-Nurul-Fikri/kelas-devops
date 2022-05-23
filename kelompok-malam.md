@@ -20,7 +20,7 @@
 | 3.      | 110219088 | Alfin Adi Surya     |alfinadisurya24@gmail.com           |alfinadisurya24                 |gitlab (ci)                |
 | 4.      | 110220247 | Habibi              |habibi20247ti@student.nurulfikri.ac.id           |habibi247                 |Docker (cd)                |
 | 5.      | 110219134 | Agung Priyo Sembodo |agun19134ti@student.nurulfikri.ac.id           |priyo00                 |Jira (Operate)                |
-| 6.      | 110219133 | Iqbal Assegaf       |           |                 |                |
+| 6.      | 110219133 | Iqbal Assegaf       |assegafpetik@gmail.com           |     assegaf07            | Trello               |
 | 7.      | 110220174 | Wahid Wahyudin      |wahi20174ti@student.nurulfikri.ac.id           |wahidw                 |                |
 
 
