@@ -1,0 +1,18 @@
+Deployment Cara Traditional
+
+Gunakan Labs.unf.ac.id
+
+1. Persiapkan Service Aplikasi
+- Web Server (apache2)
+- PHP
+- Database Server
+
+Git: gitlab / github
+
+2. git clone project ke server yang dibangun
+contoh:
+https://github.com/vonsogt/pinjam-ruang
+
+3. Ubuntu Desktop (Client)
+
+
