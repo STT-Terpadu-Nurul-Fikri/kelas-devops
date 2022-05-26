@@ -1,0 +1,10 @@
+LAMP 
+Linux, Apache, MySQL & PHP
+
+Install & Update
+
+$ sudo apt update
+$ sudo apt install apache2
+
+$ sudo ufw app list
+
