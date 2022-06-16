@@ -30,7 +30,7 @@
 |---------|-----------|-----------------------------|-----------|-----------------|----------------|
 | 1.      | 110219021 | Supriyanto                  | supr19021ti@student.nurulfikri.ac.id          |supriyanto2020                 |       Plan   (Gdocs)      |
 | 2.      | 110220016 | Fatrul Mukhlasin            | fatr20016ti@student.nurulfikri.ac.id          | fatrulmukhlasin                |      Build (github         |
-| 3.      | 110220088 | Muhammad Riza Fahluzi       |           |                 | mriza14               |
+| 3.      | 110220088 | Muhammad Riza Fahluzi       |           | mriza14                |                |
 | 4.      | 110219132 | Amelya Firjiyanti Nur'aniza | amel19132ti@student.nurulfikri.ac.id          | AmelyaFN                |          CD   (Docker ansible)  |
 | 5.      | 110220090 | Farid Jauhari Fajri         | fari20090ti@student.nurulfikri.ac.id| FaridJF|            operate   (Zabbix) |
 | 6.      | 110218090 | Fauzan Nugraha Daulay       |fauz18090ti@student.nurulfikri.ac.id|owzan29|          CF   (Zendesk,browserstrack   |
