@@ -53,7 +53,7 @@
 | 1.      | 110220096 | Wanandi                        |   wana20096ti@student.nurulfikri.ac.id        |   wanandi274              |  ketua              |
 | 2.      | 110220122 | Agita Syafitri                 |   agit20122ti@student.nurulfikri.ac.id        |   Agita01              |                |
 | 3.      | 110220066 | Syifa Nuraini Al Rohman        |           |                 |                |
-| 4.      | 110220278 | Elbit Nuriya                   |           |                 |                |
+| 4.      | 110220278 | Elbit Nuriya                   |   elbi20278ti@student.nurulfikri.ac.id        |    Elbitnuriya06             |                |
 | 5.      | 110219038 | Muhammad Rafi Maulana          |muha19038ti@student.nurulfikri.ac.id          |  MRafiMaulana               |                |
 | 6.      | 110220134 | Muhammad Fathur Abdullah Azzam |           |                 |                |
 | 7.      | 110219068 | Achmad Izhar                   |           |                 |                |
