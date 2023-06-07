@@ -8,7 +8,7 @@ Tugas Pre Project Akhir
 -- Tools DevOps yang digunakan dalam setiap Fase
 -- Domain
 -- Informasi lainnya (domain, repositori code, dsb)
-
+- Pada Case ini kita akan gunakan Trello untuk Manajemen Proyek
 
 # Deskripsi Tugas Akhir #001
 
