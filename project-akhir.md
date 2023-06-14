@@ -10,6 +10,13 @@ Tugas Pre Project Akhir
 -- Informasi lainnya (domain, repositori code, dsb)
 - Pada Case ini kita akan gunakan Trello untuk Manajemen Proyek
 
+# Part 2
+Persiapkan kebutuhan Project Akhir
+- Domain
+- Infrastruktur
+- Tools DevOps
+
+
 # Deskripsi Tugas Akhir #001
 
 Implementasi dan Optimasi Alur Kerja DevOps dalam Pengembangan Aplikasi Web Skala Besar
